@@ -23,6 +23,9 @@ coffee-to-typescript-watch:
 copy-definitions:
 	cp example/*.d.ts build/cs2ts
 
+copy-definitions-watch:
+	$(CS) src/watch-and-copy.coffee -p example -o build/cs2ts example/*.d.ts
+
 merge-definitions:
 	make copy-definitions
 	$(CS) src/dts-merger.coffee \
