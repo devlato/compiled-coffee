@@ -1,0 +1,10 @@
+{
+	"name": "typed-coffeescript",
+	"description": "Set of scripts allowing to use the TypeScript compiler with pure CoffeeScript code and typings kept in external d.ts files.",
+	"dependencies": {
+		"coffee-script-to-typescript": "*",
+		"typescript": "*",
+		"coffee-script": "*",
+		"commander": "*"
+	}
+}
