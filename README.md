@@ -8,7 +8,6 @@ This is only a *proof of concept*.
 
 - write pure coffeescript
 - write d.ts file for each coffee file
- - TODO copy files to the correct dir on update (when --watch used)
 - transpile coffee to ts
 - change commonjs require and exports to ts versions
  - TODO selective exports
