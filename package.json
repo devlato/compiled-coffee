@@ -6,5 +6,9 @@
 		"typescript": "*",
 		"coffee-script": "*",
 		"commander": "*"
+	},
+	"devDependencies": {
+		"mocha": "*",
+		"expect.js": "*"
 	}
 }

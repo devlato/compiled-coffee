@@ -1,6 +1,7 @@
 CS2TS=./node_modules/coffee-script-to-typescript/bin/coffee
 TS=./node_modules/typescript/bin/tsc
 CS=./node_modules/coffee-script/bin/coffee
+MOCHA=./node_modules/mocha/bin/mocha
 
 build:
 	make clean
@@ -68,6 +69,18 @@ compile-watch:
 		--watch \
 		--module commonjs \
 		build/typescript/*.ts
+
+test:
+	$(MOCHA) \
+		--compilers coffee:coffee-script \
+		--reporter spec \
+		test/*.coffee
+
+test-watch:
+	$(MOCHA) --watch \
+		--compilers coffee:coffee-script \
+		--reporter spec \
+		test/*.coffee
 
 clean:
 	rm build/*/*
