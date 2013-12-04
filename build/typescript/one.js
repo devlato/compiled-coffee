@@ -5,9 +5,6 @@ var One = (function () {
     }
     One.prototype.foo = function () {
     };
-
-    One.prototype.baz = function (foo) {
-    };
     return One;
 })();
 exports.One = One;

@@ -5,7 +5,6 @@ class One
 	constructor: (foo, bar) ->
 
 	foo: ->
-	baz: (foo) ->
 
 #exports.One = One
 

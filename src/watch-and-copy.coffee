@@ -2,7 +2,7 @@
 Watch for file changes and copy it to the destination when changed.
 
 TODO:
-- only first change is honored
+- only the first change is honored when using fs.watch
 """
 
 fs = require 'fs'
@@ -34,11 +34,12 @@ params.args.forEach (source) ->
 		target = target.substr dir_prefix_length
 	target = path.join params.output or process.cwd(), target
 
-	exec = ->
+	exec = (curr, prev) ->
+		return if curr and curr.mtime is prev.mtime
 		console.log "Coping file #{source}"
-#		input = fs.createReadStream file
-#		output = fs.createWriteStream target
-#		input.pipe output
+		input = fs.createReadStream file
+		output = fs.createWriteStream target
+		input.pipe output
 
 	# TODO use fs.watch when it'll work
 	# fs.watchFile file, exec

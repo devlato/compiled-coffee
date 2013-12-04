@@ -8,10 +8,26 @@ build:
 	make typescript
 	make compile
 
+build-watch:
+	make clean
+	#make typescript-watch > /dev/null &
+		make typescript-watch &
+	# sleep needs to include all sleep from forked cmds
+	sleep 4
+	make compile-watch
+
 typescript:
 	make coffee-to-typescript
-	make marge-definitions
+	make copy-definitions
+	make merge-definitions
 	make fix-modules
+
+typescript-watch:
+	make coffee-to-typescript-watch &
+	sleep 2
+	make merge-definitions-watch &
+	sleep 1
+	make fix-modules-watch
 
 coffee-to-typescript:
 	$(CS2TS) -cma -o build/cs2ts example/*.coffee
@@ -35,7 +51,8 @@ merge-definitions:
 		build/cs2ts/*.ts
 
 merge-definitions-watch:
-	make copy-definitions
+	make copy-definitions-watch &
+	sleep 0.5
 	$(CS) src/dts-merger.coffee \
 		--dir-prefix build/cs2ts \
 		--watch \

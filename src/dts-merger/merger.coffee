@@ -59,15 +59,17 @@ merge = (source, definition) ->
 			"#{indent}#{def[1]} {"
 
 		# for each attribute in the source class
-		match = match.replace regexps.ATTRIBUTE(), (match, indent, signature, name, space, suffix) ->
-			log "Found attribute '#{name}'"
-			# match a corresponding method in the class'es definiton
-			def = regexps.MEMBER_DEF(name).exec class_def
-			return match if not def
-			log "Found definition for method '#{name}'"
-			"#{indent}#{def[1]} #{suffix}"
+		match = match.replace(regexps.ATTRIBUTE(),
+			(match, indent, signature, name, space, suffix) ->
+				log "Found attribute '#{name}'"
+				# match a corresponding method in the class'es definiton
+				def = regexps.MEMBER_DEF(name).exec class_def
+				return match if not def
+				log "Found definition for method '#{name}'"
+				"#{indent}#{def[1]} #{suffix}"
+		)
 
-	# TODO use body instead of match and return correct source
+	# TODO use body instead of match
 
 	source
 

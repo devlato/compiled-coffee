@@ -6,8 +6,6 @@ class One {
     constructor(foo: string, bar: number) {}
 
     public foo(): void {}
-
-    public baz(foo: number): number {}
 }
 
 //exports.One = One

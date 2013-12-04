@@ -5,7 +5,9 @@
 		"coffee-script-to-typescript": "*",
 		"typescript": "*",
 		"coffee-script": "*",
-		"commander": "*"
+		"commander": "*",
+		"asyncmachine": "*",
+		"suspend": "*"
 	},
 	"devDependencies": {
 		"mocha": "*",

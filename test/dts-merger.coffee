@@ -57,7 +57,6 @@ describe 'd.ts merger', ->
 		it 'should merge the visibility', ->
 			expect(output).to.contain "private foo("
 
-
 	describe 'for class attributes', ->
 		output = ''
 

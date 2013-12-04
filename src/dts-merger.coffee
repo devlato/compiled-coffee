@@ -63,14 +63,17 @@ params.args.forEach (source) ->
 		target = target.substr dir_prefix_length
 	target = path.join params.output or process.cwd(), target
 
-	exec = ->
+	exec = (curr, prev) ->
+#		console.log source, curr?.mtime, prev?.mtime
+		return if curr and curr.mtime is prev.mtime
 		content = merger.mergeFile file
 		console.log "Merged #{source}"
 		fs.writeFile target, content
 
 	if params.watch
-		# log "Watching #{file}"
-		fs.watch file, exec
+		log "Watching #{file}"
+		# TODO use fs.watch when stable
+		fs.watchFile file, persistent: yes, interval: 500, exec
 		exec()
 	else
 		exec()
