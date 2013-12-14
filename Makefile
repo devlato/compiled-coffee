@@ -102,4 +102,4 @@ test-watch:
 clean:
 	rm build/*/*
 
-.PHONY: build
+.PHONY: build test

@@ -7,7 +7,7 @@ class Two extends one.One
 		super()
 		console.log @bar.toPrecision()
 
-	twoFoo: -> @baz(123)
+	twoFoo: -> @baz 123
 
 foo = new Two 123, 123
 
