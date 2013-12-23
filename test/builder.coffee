@@ -5,7 +5,7 @@ spawn = require('child_process').spawn
 
 describe 'Builder', ->
 	
-	describe 'building', ->
+	describe 'compilation', ->
 		
 		before (next) ->
 			# clean
@@ -14,18 +14,21 @@ describe 'Builder', ->
 				@builder = new Builder ['test/src/test.coffee'], 'test/'
 				@builder.run next
 			
+			
 		it 'should build typescript from coffeescript', ->
-			expect(fs.existsSync ['./build/cs2ts/test.ts']).to.be.ok
+			expect(fs.existsSync "#{__dirname }/build/cs2ts/test.ts").to.be.ok()
 			
 		it 'should copy the definitions', ->
-			expect(fs.existsSync ['./build/cs2ts/test.d.ts']).to.be.ok
+			expect(fs.existsSync "#{__dirname }/build/cs2ts/test.d.ts").to.be.ok()
 			
 		it 'should merge the definitions', ->
-			expect(fs.existsSync ['./build/typed/test.ts']).to.be.ok 	
+			expect(fs.existsSync "#{__dirname }/build/typed/test.ts").to.be.ok()
 		
-		it 'should fix module imports/exports'
+		it 'should fix module imports/exports', ->
+			expect(fs.existsSync "#{__dirname }/build/typescript/test.ts").to.be.ok()
 		
-		it 'should compile typescript'
+		it 'should compile typescript', ->
+			expect(fs.existsSync "#{__dirname }/build/dist/test.js").to.be.ok()
 	
 	it 'should watch for changes'
 	

@@ -1,3 +1,5 @@
+#!/usr/bin/env coffee
+ 
 """
 Converts commonjs imports and exports into typescript equivalents.
 

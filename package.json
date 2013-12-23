@@ -8,7 +8,9 @@
 		"commander": "latest",
 		"asyncmachine": "latest",
 		"suspend": "latest",
-		"async": "latest"
+		"async": "latest",
+		"sugar": "latest",
+		"glob": "latest"
 	},
 	"devDependencies": {
 		"mocha": "*",

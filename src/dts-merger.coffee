@@ -1,30 +1,5 @@
 #!/usr/bin/env coffee
 
-###
-Merges typescript source with a definition file with the same name.
-
-TODO
-- globbing files
-- watch d.ts files too
-
-Things to merge
-- class
-	generics
-	implements
-- methods
-	params (DONE)
-	return types (DONE)
-	visibility (DONE)
-- attributes
-	types (DONE)
-	visibility (DONE)
-
-Later
-- modules
-- functions
-- properties
-###
-
 fs = require 'fs'
 path = require 'path'
 params = require 'commander'
