@@ -1,6 +1,6 @@
 #!./node_modules/coffeescript-generators/bin/coffee
 
-Builder = require './typedcoffee/builder.generators'
+Builder = require './coffeetype/builder.generators'
 params = require 'commander'
 
 params
