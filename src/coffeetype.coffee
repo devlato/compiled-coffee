@@ -15,7 +15,7 @@ params
 	.parse(process.argv)
 
 files = yield glob '**.coffee', cwd: params.sourceDir, suspend.resume()
-builder = new Builder files, params.outputDir
+builder = new Builder files, params.sourceDir, params.outputDir
 
 # run
 if params.watch
@@ -23,3 +23,15 @@ if params.watch
 else 
 	yield builder.run(), suspend.resume()
 	console.log "Compilation completed"
+
+###
+TODO
+  var files input
+	watch files
+  watch definitions
+  flowless restart (clock)
+  ...
+  typescript service integration? (via memory, not just files)
+  merge command line tools directly to this event loop
+  watch changes throttling support
+###

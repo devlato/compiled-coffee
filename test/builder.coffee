@@ -8,11 +8,11 @@ describe 'Builder', ->
 	describe 'compilation', ->
 		
 		before (next) ->
-			# clean
-			spawn('rm', ['test/build/*/*']).on 'close', =>
-				@timeout 0
-				@builder = new Builder ['test/src/test.coffee'], 'test/'
-				@builder.run next
+			# TODO create clean
+#			spawn('rm', ['test/build/*/*']).on 'close', =>
+			@timeout 0
+			@builder = new Builder ['test.coffee'], 'test/src/', 'test/build/'
+			@builder.run next
 			
 			
 		it 'should build typescript from coffeescript', ->
