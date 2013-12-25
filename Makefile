@@ -7,7 +7,9 @@ MOCHA=./node_modules/mocha/bin/mocha
 builder:
 	$(CS_GENERATORS) \
 		--watch -c \
-		src/coffeetype/builder.generators.coffee
+		src/coffeetype/builder.generators.coffee \
+		src/coffeetype.coffee \
+		src/coffeetype/commands.coffee
 
 build:
 	make clean

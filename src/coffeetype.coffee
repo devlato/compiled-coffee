@@ -1,28 +1,39 @@
-#!/home/bob/Dropbox/workspace/arch-dell/typed-coffeescript/node_modules/coffeescript-generators/bin/coffee
+#!/usr/bin/env node --harmony
 
 Builder = require './coffeetype/builder.generators'
 params = require 'commander'
 glob = require 'glob'
 suspend = require 'suspend'
+go = suspend.resume
+assert = require 'assert'
 
 params
 	.version('0.0.1')
 #	.option('-w, --watch', 'Watch for file changes')
 #	.option('-l, --log', 'Show logging information')
-	.option('-i, --source-dir', 'Input directory for source files')
-	.option('-o, --build-dir', 'Output directory for built files')
+	.option('-i, --source-dir <dir>', 'Input directory for source files')
+	.option('-o, --build-dir <dir>', 'Output directory for built files')
 	.option('-w, --watch', 'Watch for source files changes')
 	.parse(process.argv)
 
-files = yield glob '**.coffee', cwd: params.sourceDir, suspend.resume()
-builder = new Builder files, params.sourceDir, params.outputDir
+assert params.sourceDir and params.buildDir, 
+	"Source and build dirs are required."
 
-# run
-if params.watch
-	builder.watch()
-else 
-	yield builder.run(), suspend.resume()
+main = suspend ->
+	# TODO doesnt glob subdirs?
+	files = yield glob '**.coffee', {cwd: params.sourceDir}, go()
+	assert files.length, "No files to precess found"
+	builder = new Builder files, params.sourceDir, params.buildDir
+	
+	# run
+	if params.watch
+		yield builder.watch go()
+	else 
+		yield builder.build go()
+		
 	console.log "Compilation completed"
+		
+main()
 
 ###
 TODO
