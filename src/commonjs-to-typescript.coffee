@@ -26,7 +26,8 @@ params
 	.parse(process.argv)
 
 if params.watch and not params.output
-	console.error 'Can\'t use --watch without --output dir differet than the source one.'
+	console.error "Can't use --watch without --output dir differet than the 
+		source one.'"
 	# TODO compare dirs
 	process.exit()
 
@@ -37,8 +38,16 @@ convert = (name) ->
 	source = fs.readFileSync name, 'utf8'
 
 	# imports
+	imports = []
 	source = source.replace /(^|\n)(?:var\s)?(\w+)\s=\srequire\((['".\w/]+)\);?/g,
-		"$1import $2 = require($3);"
+		(match, _1, _2, _3) ->
+			imports.push _2
+			"#{_1}import #{_2} = require(#{_3});"
+	if imports
+		console.log imports
+		for name in imports
+			source = source.replace (new RegExp "^(var[^;]+?)((, )?#{name})"), '$1'
+		source = source.replace (new RegExp "^var\s*;"), ''
 
 	# TODO remove coffeescript var intialization
 

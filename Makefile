@@ -96,7 +96,7 @@ compile-watch:
 		build/typescript/*.ts
 
 test:
-	rm test/build/*/**
+	#rm test/build/*/**
 	$(MOCHA) \
 		--harmony-generators \
 		--compilers coffee:coffee-script \

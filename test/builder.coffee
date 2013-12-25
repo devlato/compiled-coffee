@@ -12,7 +12,7 @@ describe 'Builder', ->
 #			spawn('rm', ['test/build/*/*']).on 'close', =>
 			@timeout 0
 			@builder = new Builder ['test.coffee'], 'test/src/', 'test/build/'
-			@builder.run next
+			@builder.build next
 			
 			
 		it 'should build typescript from coffeescript', ->
