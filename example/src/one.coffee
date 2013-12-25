@@ -7,4 +7,3 @@ class One
 	foo: ->
 
 #exports.One = One
-

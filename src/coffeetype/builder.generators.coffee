@@ -4,10 +4,10 @@ go = suspend.resume
 spawn = require('child_process').spawn
 async = require 'async'
 fs = require 'fs'
-spawn_ = spawn
-spawn = (args...) ->
-	console.log 'Executing: ', args
-	spawn_.apply null, args
+#spawn_ = spawn
+#spawn = (args...) ->
+#	console.log 'Executing: ', args
+#	spawn_.apply null, args
 path = require 'path'
 EventEmitter = require('events').EventEmitter
 require 'sugar'
@@ -28,7 +28,7 @@ class Builder extends EventEmitter
 		@coffee_suffix = /\.coffee$/
 		
 	prepareDirs: suspend.async ->
-		return next() if @build_dirs_created
+		return if @build_dirs_created
 		dirs = ['cs2ts', 'dist', 'typed', 'typescript']
 		yield async.each dirs, (suspend.async (dir) =>
 				dir_path = @output_dir + @sep + dir
@@ -102,6 +102,8 @@ class Builder extends EventEmitter
 		yield async.each @files, (@moveCompiledFiles.bind @), go()
 		return @emit('aborted') if @clock isnt tick
 		
+		@proc = null
+		
 	tsFiles: -> 
 		files = (file.replace @coffee_suffix, '.ts' for file in @files)
 		
@@ -124,6 +126,12 @@ class Builder extends EventEmitter
 		throw new Error 'not implemented'
 		
 	watch: ->
-		# TODO abort existing process if any
+		for file in @files
+			node = @source_dir + @sep + file
+			fs.watchFile node, persistent: yes, interval: 500, =>
+				console.log "\n#{'-'.repeat 20}\n\n"
+				@proc?.kill()
+				@build ->
+		@build ->
 
 module.exports = Builder
