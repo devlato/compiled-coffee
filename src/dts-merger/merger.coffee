@@ -41,7 +41,7 @@ merge = (source, definition) ->
 		METHOD_DEF: (name) ->
 			name = RegExpQuote name
 			new RegExp(
-					"#{config.indent}((?:public|private)?\\s?(#{name})(?=\\()((?:\\n|.)+?))(\\s?;)", 'i')
+					"#{config.indent}((?:public|private)?\\s?(#{name})(?=\\()((?:\\n|.)+?))(\\s?;)", 'ig')
 		ATTRIBUTE_DEF: (name) ->
 			name = RegExpQuote name
 			new RegExp(
@@ -61,10 +61,16 @@ merge = (source, definition) ->
 		match = match.replace regexps.METHOD(), (match, indent, signature, name) ->
 			log "Found method '#{name}'"
 			# match a corresponding method in the class'es definiton
-			def = regexps.METHOD_DEF(name).exec class_def
-			return match if not def
+			defs = []
+			regexp = regexps.METHOD_DEF name
+			while def = regexp.exec class_def
+				defs.push def
+			return match if not defs.length
 			log "Found definition for method '#{name}'"
-			"#{indent}#{def[1]} {"
+			ret = ''
+			for def in defs[1..-1]
+				ret += "#{indent}#{def[1]};"
+			"#{ret}#{indent}#{defs[0][1]} {"
 
 		# for each attribute in the source class
 		match = match.replace(regexps.ATTRIBUTE(),
