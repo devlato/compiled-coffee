@@ -112,6 +112,9 @@ class Builder extends EventEmitter
 	tsFiles: -> 
 		files = (file.replace @coffee_suffix, '.ts' for file in @files)
 		
+	dtsFiles: -> 
+		files = (file.replace @coffee_suffix, '.d.ts' for file in @files)
+		
 	moveCompiledFiles: (file, next) ->
 		new_name = file.replace @coffee_suffix, '.js'
 		fs.rename "#{@output_dir}/typescript/#{new_name}", 
@@ -131,14 +134,17 @@ class Builder extends EventEmitter
 		throw new Error 'not implemented'
 		
 	watch: ->
+		reload = =>
+			console.log "\n#{'-'.repeat 20}\n\n"
+			@proc?.kill()
+			@build ->
 		for file in @files
 			node = @source_dir + @sep + file
-			# TODO watch definitions
-			# TODO watch linked definitions
-			fs.watchFile node, persistent: yes, interval: 500, =>
-				console.log "\n#{'-'.repeat 20}\n\n"
-				@proc?.kill()
-				@build ->
+			fs.watchFile node, persistent: yes, interval: 500, reload
+		for file in @dtsFiles()
+			node = @source_dir + @sep + file
+			continue if not fs.existsSync node
+			fs.watchFile node, persistent: yes, interval: 500, reload
 		@build ->
 
 module.exports = Builder
