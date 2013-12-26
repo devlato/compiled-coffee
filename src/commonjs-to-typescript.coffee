@@ -46,8 +46,9 @@ convert = (name) ->
 	if imports
 		console.log imports
 		for name in imports
-			source = source.replace (new RegExp "^(var[^;]+?)((, )?#{name})"), '$1'
-		source = source.replace (new RegExp "^var\s*;"), ''
+			source = source.replace (new RegExp "^(var[^;]+?)((, )?#{name})", 'm'), 
+				'$1'
+		source = source.replace (new RegExp "^var\s*;", 'm'), ''
 
 	# TODO remove coffeescript var intialization
 

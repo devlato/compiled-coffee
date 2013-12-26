@@ -16,6 +16,9 @@ mergeFile = (name) ->
 	definition = fs.readFileSync definition_file, 'utf8'
 
 	merge source, definition
+	
+RegExpQuote = (str) ->
+    (str+'').replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
 
 merge = (source, definition) ->
 
@@ -24,20 +27,25 @@ merge = (source, definition) ->
 
 	regexps =
 		CLASS: (name) ->
-			name ?= '\\w+'
+#			name = RegExpQuote name
+			name ?= '[\\w$]+'
 			new RegExp "class\\s(#{name})((?:\\n|.)+?)(?:\\n\\})", 'ig'
 		METHOD: (name) ->
-			name ?= '\\w+'
+			name ?= '[\\w$]+'
 			new RegExp(
-					"(#{config.indent})((?:(?:public|private)\\s)?(#{name})((?:\\n|[^=])+?))(?:\\s?\\{)", 'ig')
+					"(#{config.indent})((?:(?:public|private)\\s)?(#{name})(?=\\()((?:\\n|[^=])+?))(?:\\s?\\{)", 'ig')
 		ATTRIBUTE: (name) ->
-			name ?= '\\w+'
+			name ?= '[\\w$]+'
 			new RegExp(
-					"(#{config.indent})((?:(?:public|private)\\s)?(#{name})((?:\\n|[^(])+?))(?:\\s?(=|;))", 'ig')
-		MEMBER_DEF: (name) ->
-			name ?= '\\w+'
+					"(#{config.indent})((?:(?:public|private)\\s)?(#{name})(?=:|=|;|\\s)((?:\\n|[^(])+?))(?:\\s?(=|;))", 'ig')
+		METHOD_DEF: (name) ->
+			name = RegExpQuote name
 			new RegExp(
-					"#{config.indent}((?:public|private)?\\s?(#{name})((?:\\n|.)+?))(\\s?;)", 'i')
+					"#{config.indent}((?:public|private)?\\s?(#{name})(?=\\()((?:\\n|.)+?))(\\s?;)", 'i')
+		ATTRIBUTE_DEF: (name) ->
+			name = RegExpQuote name
+			new RegExp(
+					"#{config.indent}((?:public|private)?\\s?(#{name})(?=:|=|;|\\s)((?:\\n|.)+?))(\\s?;)", 'i')
 
 	# for each class in the source
 	source = source.replace regexps.CLASS(), (match, name, body) ->
@@ -53,7 +61,7 @@ merge = (source, definition) ->
 		match = match.replace regexps.METHOD(), (match, indent, signature, name) ->
 			log "Found method '#{name}'"
 			# match a corresponding method in the class'es definiton
-			def = regexps.MEMBER_DEF(name).exec class_def
+			def = regexps.METHOD_DEF(name).exec class_def
 			return match if not def
 			log "Found definition for method '#{name}'"
 			"#{indent}#{def[1]} {"
@@ -63,7 +71,7 @@ merge = (source, definition) ->
 			(match, indent, signature, name, space, suffix) ->
 				log "Found attribute '#{name}'"
 				# match a corresponding method in the class'es definiton
-				def = regexps.MEMBER_DEF(name).exec class_def
+				def = regexps.ATTRIBUTE_DEF(name).exec class_def
 				return match if not def
 				log "Found definition for method '#{name}'"
 				"#{indent}#{def[1]} #{suffix}"
