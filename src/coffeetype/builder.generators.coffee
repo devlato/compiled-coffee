@@ -90,9 +90,14 @@ class Builder extends EventEmitter
 			"--noLib"]
 				.include(@tsFiles()),
 			cwd: "#{@output_dir}/typescript/"
-		@proc.on 'error', console.log
+#		@proc.on 'error', console.log
 		@proc.stderr.setEncoding 'utf8'
-		@proc.stderr.on 'data', (err) -> console.log err
+		@proc.stderr.on 'data', (err) =>
+			# filter out the file path
+			remove = "#{@output_dir}#{@sep}typescript"
+			while ~err.indexOf remove
+				err = err.replace remove, ''
+			console.log err
 			
 		yield @proc.on 'close', go()
 		return @emit('aborted') if @clock isnt tick
@@ -128,6 +133,8 @@ class Builder extends EventEmitter
 	watch: ->
 		for file in @files
 			node = @source_dir + @sep + file
+			# TODO watch definitions
+			# TODO watch linked definitions
 			fs.watchFile node, persistent: yes, interval: 500, =>
 				console.log "\n#{'-'.repeat 20}\n\n"
 				@proc?.kill()

@@ -1,4 +1,5 @@
 fs = require 'fs'
+require 'sugar'
 
 global.log ?= ->
 
@@ -68,9 +69,9 @@ merge = (source, definition) ->
 			return match if not defs.length
 			log "Found definition for method '#{name}'"
 			ret = ''
-			for def in defs[1..-1]
+			for def in defs[0...-1]
 				ret += "#{indent}#{def[1]};"
-			"#{ret}#{indent}#{defs[0][1]} {"
+			"#{ret}#{indent}#{defs.last()[1]} {"
 
 		# for each attribute in the source class
 		match = match.replace(regexps.ATTRIBUTE(),
