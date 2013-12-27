@@ -24,7 +24,7 @@ RegExpQuote = (str) ->
 merge = (source, definition) ->
 
 	config =
-		indent: '(?:^|\\n)(?:\\s{4}|\\t)'
+		indent: '(?:^|\\n)(?:\\s{4}|\\t{2})'
 
 	regexps =
 		CLASS: (name) ->
@@ -42,7 +42,7 @@ merge = (source, definition) ->
 		METHOD_DEF: (name) ->
 			name = RegExpQuote name
 			new RegExp(
-					"#{config.indent}((?:public|private)?\\s?(#{name})(?=\\()((?:\\n|.)+?))(\\s?;)", 'ig')
+					"#{config.indent}((?:public|private)?\\s?(#{name})(?=\\()(?:\\n|.)+?)(\\s?;)", 'ig')
 		ATTRIBUTE_DEF: (name) ->
 			name = RegExpQuote name
 			new RegExp(
@@ -67,7 +67,7 @@ merge = (source, definition) ->
 			while def = regexp.exec class_def
 				defs.push def
 			return match if not defs.length
-			log "Found definition for method '#{name}'"
+			log "Found #{defs.length} definition(s) for the method '#{name}'"
 			ret = ''
 			for def in defs[0...-1]
 				ret += "#{indent}#{def[1]};"
