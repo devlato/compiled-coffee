@@ -68,6 +68,9 @@ params.args.forEach (source) ->
 		return if curr and curr.mtime is prev.mtime
 		content = merger.mergeFile file
 		console.log "Merged #{source}"
+		if not content
+			destination = fs.createWriteStream target
+			(fs.createReadStream file).pipe destination
 		fs.writeFile target, content
 
 	if params.watch

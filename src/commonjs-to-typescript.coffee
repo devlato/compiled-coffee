@@ -8,6 +8,10 @@ TODO:
 - match exports to specific classes
 - module.exports = {...}
 - multiline exports
+import asyncmachine = require("../src2/asyncmachine");
+import expect = require("chai");.expect;
+import sinon = require("sinon");
+import Promise = require("rsvp");.Promise;
 """
 
 fs = require 'fs'
@@ -44,16 +48,15 @@ convert = (name) ->
 			imports.push _2
 			"#{_1}import #{_2} = require(#{_3});"
 	if imports
-		console.log imports
 		for name in imports
 			source = source.replace (new RegExp "^(var[^;]+?)((, )?#{name})", 'm'), 
 				'$1'
-		source = source.replace (new RegExp "^var\s*;", 'm'), ''
+	source = source.replace "var ;", ''
 
 	# TODO remove coffeescript var intialization
 
 	# export all first level elements
-	source = source.replace /(?:^|\n)(class|function|module)/g, "export $1"
+	source = source.replace /(?:^|\n)(class|function|module )/g, "export $1"
 
 	#	# TODO exports
 	#	source = source.replace /(?:module)?\.exports\.(\w+) = (\w+)?(?:[\n;])/g,

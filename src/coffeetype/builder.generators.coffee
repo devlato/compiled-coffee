@@ -1,3 +1,10 @@
+"""
+TODO
+- filter out specific TS errors
+error TS2108: 'this' cannot be referenced within module bodies
+"""
+
+
 Commands = require './commands'
 suspend = require 'suspend'
 go = suspend.resume
@@ -87,6 +94,7 @@ class Builder extends EventEmitter
 		@proc = spawn "tsc", [
 			"#{__dirname}/../../typings/ecma.d.ts", 
 			"--module", "commonjs", 
+			"--declarations", 
 			"--noLib"]
 				.include(@tsFiles()),
 			cwd: "#{@output_dir}/typescript/"
@@ -123,6 +131,8 @@ class Builder extends EventEmitter
 	copyDefinitionFiles: (file, next) ->
 		# TODO create dirs in the output
 		dts_file = file.replace @coffee_suffix, '.d.ts'
+		# TODO async
+		return next() if not fs.existsSync dts_file
 		destination = fs.createWriteStream "#{@output_dir}/cs2ts/#{dts_file}"
 		destination.on 'close', next
 		(fs.createReadStream @source_dir + @sep + dts_file).pipe destination
