@@ -1,5 +1,5 @@
 {
-	"name": "CompiledCoffee",
+	"name": "compiled-coffee",
 	"description": "CompiledCoffee marries CoffeeScript with TypeScript's type system via the definition files.",
 	"dependencies": {
 		"coffee-script-to-typescript": "TobiaszCudnik/coffeescript-to-typescript",
