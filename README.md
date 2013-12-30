@@ -19,6 +19,7 @@ In the definition file you can type following:
 - interfaces
 
 Not yet here:
+
 - modules
 - functions
 - variables
@@ -26,6 +27,7 @@ Not yet here:
 - default params' types
 
 Later:
+
 - config files for misc params
 - typing JS files
 - watching referenced definitions
@@ -35,7 +37,28 @@ Later:
 - all classes are exported (no `exports =`)
 - underscore dependency for ranges
 - no down ranges like [9..0]
-- details [at palantir/coffeescript-to-typescript https://github.com/palantir/coffeescript-to-typescript]
+- details [at palantir/coffeescript-to-typescript]( https://github.com/palantir/coffeescript-to-typescript)
+
+# Install
+
+```
+npm install compiled-coffee
+```
+
+# Usage
+
+```
+  Usage: ccoffee -i <src> -o <build>
+
+  Options:
+
+    -h, --help                     output usage information
+    -V, --version                  output the version number
+    -i, --source-dir <dir>         Input directory for source files
+    -o, --build-dir <dir>          Output directory for built files
+    -p, --pack <FILE:MODULE_NAME>  Creates a CJS browserify package
+    -w, --watch                    Watch for source files changes
+```
 
 # The flow
 
