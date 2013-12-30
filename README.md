@@ -13,13 +13,15 @@ TODO are:
 - modules
 - functions
 - variables
+- constructor signature
+- default params' types
 
 # Limitations to CoffeeScript 
-- all classes are exported
+- all classes are exported (no `exports =`)
 - underscore dependency for ranges
-- 
+- no down ranges like [9..0]
 
-# Target solution
+# The flow
 
 - write pure coffeescript
 - write d.ts file for each coffee file
@@ -32,4 +34,4 @@ TODO are:
 - compile ts with typescript
 - TODO using a sourcemap and ts service, provide autocompletion information
  - solution similar to tern.js completion for coffee
-- TODO watch for changes and refresh needed steps
+- watch for changes and refresh the build result

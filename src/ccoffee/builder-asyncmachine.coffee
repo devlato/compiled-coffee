@@ -2,17 +2,17 @@ asyncmachine = require 'asyncmachine'
 Commands = require './commands'
 
 class Build extends asyncmachine.AsyncMachine
-	state_Building: {}
-	state_Watching: {}
+	Building: {}
+	Watching: {}
 
-	state_FileUpdated: {}
+	FileUpdated: {}
 
-	state_Cs2ts: {}
-	state_Modules: {}
-	state_Definitions: {}
-	state_Merging: {}
+	Cs2ts: {}
+	Modules: {}
+	Definitions: {}
+	Merging: {}
 
-	state_Closing:
+	Closing:
 		drops: ['Cs2ts', 'Modules', 'Definitions', 'Merging']
 
 	FileUpdated_enter: ->
@@ -20,7 +20,7 @@ class Build extends asyncmachine.AsyncMachine
 		@dropState 'FileUpdated'
 
 	Cs2ts_enter: ->
-		@c2ts_process = @os.spawn Commands.
+		@c2ts_process = @os.spawn Commands
 
 	Cs2ts_exit: ->
 		@c2ts_process.close()
