@@ -23,7 +23,7 @@ if not params.sourceDir or not params.buildDir
 
 main = suspend ->
 	# TODO doesnt glob subdirs?
-	files = yield glob '**.coffee', {cwd: params.sourceDir}, go()
+	files = yield glob '**/*.coffee', {cwd: params.sourceDir}, go()
 	assert files.length, "No files to precess found"
 	builder = new Builder files, params.sourceDir, params.buildDir, params.pack
 	

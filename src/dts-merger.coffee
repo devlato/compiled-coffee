@@ -29,6 +29,7 @@ fs = require 'fs'
 path = require 'path'
 params = require 'commander'
 merger = require './dts-merger/merger'
+writestreamp = require 'writestreamp'
 
 params
 	.version('0.0.1')
@@ -68,10 +69,12 @@ params.args.forEach (source) ->
 		return if curr and curr.mtime is prev.mtime
 		content = merger.mergeFile file
 		console.log "Merged #{source}"
+		destination = writestreamp target
 		if not content
-			destination = fs.createWriteStream target
 			(fs.createReadStream file).pipe destination
-		fs.writeFile target, content
+		else
+			destination.write content, ->
+				destination.end()
 
 	if params.watch
 		log "Watching #{file}"

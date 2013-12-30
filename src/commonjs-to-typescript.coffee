@@ -17,6 +17,7 @@ import Promise = require("rsvp");.Promise;
 fs = require 'fs'
 path = require 'path'
 params = require 'commander'
+writestreamp = require 'writestreamp'
 
 params
 	.version('0.0.1')
@@ -80,7 +81,9 @@ params.args.forEach (source) ->
 	exec = ->
 		content = convert file
 		console.log "Fixed modules for #{source}"
-		fs.writeFile target, content
+		destination = writestreamp target
+		destination.write content, ->
+			destination.end()
 
 	if params.watch
 		# log "Watching #{file}"

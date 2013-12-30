@@ -4,10 +4,11 @@ go = suspend.resume
 spawn = require('child_process').spawn
 async = require 'async'
 fs = require 'fs'
-#spawn_ = spawn
-#spawn = (args...) ->
-#	console.log 'Executing: ', args
-#	spawn_.apply null, args
+writestreamp = require 'writestreamp'
+spawn_ = spawn
+spawn = (args...) ->
+	console.log 'Executing: ', args
+	spawn_.apply null, args
 path = require 'path'
 EventEmitter = require('events').EventEmitter
 require 'sugar'
@@ -46,7 +47,7 @@ class Builder extends EventEmitter
 		
 		yield @prepareDirs go()
 		
-		cmd = Commands.cs2ts @files, @output_dir
+		cmd = Commands.cs2ts @output_dir, @source_dir
 		# Coffee to TypeScript
 		@proc = spawn "#{__dirname}/../../#{cmd[0]}", cmd[1..-1], 
 			cwd: @source_dir
@@ -146,7 +147,7 @@ class Builder extends EventEmitter
 		dts_file = file.replace @coffee_suffix, '.d.ts'
 		# TODO async
 		return next() if not fs.existsSync @source_dir + @sep + dts_file
-		destination = fs.createWriteStream "#{@output_dir}/cs2ts/#{dts_file}"
+		destination = writestreamp "#{@output_dir}/cs2ts/#{dts_file}"
 		destination.on 'close', next
 		(fs.createReadStream @source_dir + @sep + dts_file).pipe destination
 

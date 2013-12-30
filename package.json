@@ -15,7 +15,8 @@
 		"async": "latest",
 		"sugar": "latest",
 		"glob": "latest",
-		"browserify": "latest"
+		"browserify": "latest",
+		"writestreamp": "latest"
 	},
 	"devDependencies": {
 		"coffeescript-generators": "almost/coffee-script",

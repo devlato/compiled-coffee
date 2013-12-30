@@ -3,6 +3,7 @@ TS="node_modules/typescript/bin/tsc"
 CS="node_modules/coffee-script/bin/coffee"
 require 'sugar'
 
+# TODO get rid of this
 module.exports =
-	cs2ts: (files, output_dir) -> 
-		[CS2TS, '-cma', '-o', "#{output_dir}/cs2ts"].include files
+	cs2ts: (output_dir, source_dir) -> 
+		[CS2TS, '-cma', '-o', "#{output_dir}/cs2ts", source_dir]

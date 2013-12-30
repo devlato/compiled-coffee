@@ -1,21 +1,20 @@
 CS2TS=./node_modules/coffee-script-to-typescript/bin/coffee
 TS=./node_modules/typescript/bin/tsc
-CS=./node_modules/coffee-script/bin/coffee
 CS_GENERATORS=./node_modules/coffeescript-generators/bin/coffee
 MOCHA=./node_modules/mocha/bin/mocha
-
-builder:
-	$(CS_GENERATORS) \
-		--watch -c \
-		src/ccoffee/builder.generators.coffee \
-		src/ccoffee.coffee \
-		src/ccoffee/commands.coffee
 
 build:
 	$(CS_GENERATORS) \
 		--watch -c \
 		-o build \
 		src
+
+build-example:
+	./bin/ccoffee \
+		--watch \
+		-i example/src \
+		-o example/build \
+		-p one.js:one
 
 build-watch:
 	node --harmony ../typed-coffeescript/src/coffeetype.js -o build2 -i src2 --watch
