@@ -69,7 +69,7 @@ class Builder extends EventEmitter
 		return @emit('aborted') if @clock isnt tick
 
 		# Merge definitions
-		@proc = spawn "#{__dirname}/../dts-merger.coffee", 
+		@proc = spawn "#{__dirname}/../../bin/dts-merger", 
 			['--output', "../typed"].include(@tsFiles()),
 			cwd: "#{@output_dir}/cs2ts/"
 		@proc.on 'error', console.log
@@ -80,7 +80,7 @@ class Builder extends EventEmitter
 		return @emit('aborted') if @clock isnt tick
 
 		# Fix modules
-		@proc = spawn "#{__dirname}/../commonjs-to-typescript.coffee", 
+		@proc = spawn "#{__dirname}/../../bin/commonjs-to-typescript", 
 			['--output', "../dist"].include(@tsFiles()),
 			cwd: "#{@output_dir}/typed/"
 		@proc.on 'error', console.log
@@ -143,18 +143,21 @@ class Builder extends EventEmitter
 	clean: ->
 		throw new Error 'not implemented'
 		
-	watch: ->
-		reload = =>
-			console.log "\n#{'-'.repeat 20}\n\n"
-			@proc?.kill()
-			@build ->
+	reload: ->
+		console.log '-'.repeat 20
+		@proc?.kill()
+		@build ->
+			console.log "Compilation completed"
+		
+	watch: -> 
 		for file in @files
 			node = @source_dir + @sep + file
-			fs.watchFile node, persistent: yes, interval: 500, reload
+			fs.watchFile node, persistent: yes, interval: 500, (@reload.bind @)
 		for file in @dtsFiles()
 			node = @source_dir + @sep + file
 			continue if not fs.existsSync node
-			fs.watchFile node, persistent: yes, interval: 500, reload
+			fs.watchFile node, persistent: yes, interval: 500, (@reload.bind @)
 		@build ->
+			console.log "Compilation completed"
 
 module.exports = Builder

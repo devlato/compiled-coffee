@@ -1,6 +1,6 @@
 #!/usr/bin/env node --harmony
 
-Builder = require './coffeetype/builder.generators'
+Builder = require './ccoffee/builder.generators'
 params = require 'commander'
 glob = require 'glob'
 suspend = require 'suspend'
@@ -8,7 +8,8 @@ go = suspend.resume
 assert = require 'assert'
 
 params
-	.version('0.0.1')
+	.version('0.1.0')
+  .usage('-i <src> -o <build>')
 #	.option('-w, --watch', 'Watch for file changes')
 #	.option('-l, --log', 'Show logging information')
 	.option('-i, --source-dir <dir>', 'Input directory for source files')
@@ -16,8 +17,8 @@ params
 	.option('-w, --watch', 'Watch for source files changes')
 	.parse(process.argv)
 
-assert params.sourceDir and params.buildDir, 
-	"Source and build dirs are required."
+if not params.sourceDir or not params.buildDir 
+	return params.help()
 
 main = suspend ->
 	# TODO doesnt glob subdirs?

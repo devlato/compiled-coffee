@@ -7,12 +7,15 @@ MOCHA=./node_modules/mocha/bin/mocha
 builder:
 	$(CS_GENERATORS) \
 		--watch -c \
-		src/coffeetype/builder.generators.coffee \
-		src/coffeetype.coffee \
-		src/coffeetype/commands.coffee
+		src/ccoffee/builder.generators.coffee \
+		src/ccoffee.coffee \
+		src/ccoffee/commands.coffee
 
 build:
-	node --harmony ../typed-coffeescript/src/coffeetype.js -o build2 -i src2
+	$(CS_GENERATORS) \
+		--watch -c \
+		-o build \
+		src
 
 build-watch:
 	node --harmony ../typed-coffeescript/src/coffeetype.js -o build2 -i src2 --watch

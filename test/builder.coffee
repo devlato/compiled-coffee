@@ -1,5 +1,5 @@
 expect = require 'expect.js'
-Builder = require '../src/coffeetype/builder.generators'
+Builder = require './builder.generators'
 fs = require 'fs'
 spawn = require('child_process').spawn
 

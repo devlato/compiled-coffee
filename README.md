@@ -1,8 +1,23 @@
-# Typed CoffeeScript
+# CompiledCoffee
 
-Set of scripts allowing to use the TypeScript compiler with pure CoffeeScript code and typings kept in external d.ts files.
+CompiledCoffee marries CoffeeScript with TypeScript's type system via the definition files.
 
-This is only a *proof of concept*.
+# Status
+
+In the definition file you can type following:
+- class attributes
+- class methods
+- interfaces
+
+TODO are:
+- modules
+- functions
+- variables
+
+# Limitations to CoffeeScript 
+- all classes are exported
+- underscore dependency for ranges
+- 
 
 # Target solution
 

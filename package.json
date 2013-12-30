@@ -1,18 +1,18 @@
 {
-	"name": "typed-coffeescript",
-	"description": "Set of scripts allowing to use the TypeScript compiler with pure CoffeeScript code and typings kept in external d.ts files.",
+	"name": "CompiledCoffee",
+	"description": "CompiledCoffee marries CoffeeScript with TypeScript's type system via the definition files.",
 	"dependencies": {
-		"coffee-script-to-typescript": "latest",
+		"coffee-script-to-typescript": "TobiaszCudnik/coffeescript-to-typescript",
 		"typescript": "latest",
-		"coffee-script": "latest",
 		"commander": "latest",
-		"asyncmachine": "latest",
 		"suspend": "latest",
 		"async": "latest",
 		"sugar": "latest",
 		"glob": "latest"
 	},
 	"devDependencies": {
+		"coffeescript-generators": "almost/coffee-script",
+		"coffee-script": "latest",
 		"mocha": "*",
 		"expect.js": "*",
 		"node-inspector": "strongloop/node-inspector"
