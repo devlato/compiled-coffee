@@ -36,7 +36,7 @@ class Builder extends EventEmitter
 		
 	prepareDirs: suspend.async ->
 		return if @build_dirs_created
-		dirs = ['cs2ts', 'dist', 'typed', 'typescript']
+		dirs = ['cs2ts', 'dist', 'typed']
 		yield async.each dirs, (suspend.async (dir) =>
 				dir_path = @output_dir + @sep + dir
 				exists = yield fs.exists dir_path, suspend.resumeRaw()
@@ -81,7 +81,7 @@ class Builder extends EventEmitter
 
 		# Fix modules
 		@proc = spawn "#{__dirname}/../commonjs-to-typescript.coffee", 
-			['--output', "../typescript"].include(@tsFiles()),
+			['--output', "../dist"].include(@tsFiles()),
 			cwd: "#{@output_dir}/typed/"
 		@proc.on 'error', console.log
 		@proc.stderr.setEncoding 'utf8'
@@ -97,23 +97,23 @@ class Builder extends EventEmitter
 			"--declarations", 
 			"--noLib"]
 				.include(@tsFiles()),
-			cwd: "#{@output_dir}/typescript/"
+			cwd: "#{@output_dir}/dist/"
 #		@proc.on 'error', console.log
 		@proc.stderr.setEncoding 'utf8'
 		@proc.stderr.on 'data', (err) =>
 			# filter out the file path
-			remove = "#{@output_dir}#{@sep}typescript"
+			remove = "#{@output_dir}#{@sep}dist"
 			while ~err.indexOf remove
 				err = err.replace remove, ''
-			console.log err
+			process.stdout.write err
 			
 		yield @proc.on 'close', go()
 		return @emit('aborted') if @clock isnt tick
 		# return if not yield null
 	
 		# move compiled to dist
-		yield async.each @files, (@moveCompiledFiles.bind @), go()
-		return @emit('aborted') if @clock isnt tick
+#		yield async.each @files, (@moveCompiledFiles.bind @), go()
+#		return @emit('aborted') if @clock isnt tick
 		
 		@proc = null
 		
@@ -123,16 +123,16 @@ class Builder extends EventEmitter
 	dtsFiles: -> 
 		files = (file.replace @coffee_suffix, '.d.ts' for file in @files)
 		
-	moveCompiledFiles: (file, next) ->
-		new_name = file.replace @coffee_suffix, '.js'
-		fs.rename "#{@output_dir}/typescript/#{new_name}", 
-			"#{@output_dir}/dist/#{new_name}", next
+#	moveCompiledFiles: (file, next) ->
+#		new_name = file.replace @coffee_suffix, '.js'
+#		fs.rename "#{@output_dir}/typescript/#{new_name}", 
+#			"#{@output_dir}/dist/#{new_name}", next
 		
 	copyDefinitionFiles: (file, next) ->
 		# TODO create dirs in the output
 		dts_file = file.replace @coffee_suffix, '.d.ts'
 		# TODO async
-		return next() if not fs.existsSync dts_file
+		return next() if not fs.existsSync @source_dir + @sep + dts_file
 		destination = fs.createWriteStream "#{@output_dir}/cs2ts/#{dts_file}"
 		destination.on 'close', next
 		(fs.createReadStream @source_dir + @sep + dts_file).pipe destination

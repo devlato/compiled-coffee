@@ -1,3 +1,8 @@
+"""
+Merge default values (found in TS files).
+"""
+
+
 fs = require 'fs'
 require 'sugar'
 
