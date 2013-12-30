@@ -14,6 +14,7 @@ Right now you can write typed classes and untyped (but compiled) mocha tests
 without any headache. Compiler auto-recompiles the code after file change.
 
 In the definition file you can type following:
+
 - class attributes
 - class methods
 - interfaces
