@@ -33,7 +33,6 @@ merge = (source, definition) ->
 
 	regexps =
 		CLASS: (name) ->
-#			name = RegExpQuote name
 			name ?= '[\\w$]+'
 			new RegExp "class\\s(#{name})((?:\\n|.)+?)(?:\\n\\})", 'ig'
 		METHOD: (name) ->
@@ -52,6 +51,13 @@ merge = (source, definition) ->
 			name = RegExpQuote name
 			new RegExp(
 					"#{config.indent}((?:public|private)?\\s?(#{name})(?=:|=|;|\\s)((?:\\n|.)+?))(\\s?;)", 'i')
+		INTERFACE_DEF: (name) ->
+			name ?= '[\\w$]+'
+			new RegExp "(^|\\n)(export\\s+)?interface\\s(#{name})(?=\\s|\\{)((?:\\n|.)+?)(?:\\n\\})", 'ig'
+			
+	regexp = regexps.INTERFACE_DEF()
+	while def = regexp.exec definition
+		source += def[0]
 
 	# for each class in the source
 	source = source.replace regexps.CLASS(), (match, name, body) ->
@@ -61,7 +67,7 @@ merge = (source, definition) ->
 		def = regexps.CLASS(name).exec definition
 		return match if not def
 		log "Found definition for class '#{name}"
-		class_def = def[2]
+		class_def = def[0]
 
 		# for each method in the source class
 		match = match.replace regexps.METHOD(), (match, indent, signature, name) ->
