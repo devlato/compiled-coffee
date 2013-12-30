@@ -1,20 +1,13 @@
-"""
-TODO
-- filter out specific TS errors
-error TS2108: 'this' cannot be referenced within module bodies
-"""
-
-
 Commands = require './commands'
 suspend = require 'suspend'
 go = suspend.resume
 spawn = require('child_process').spawn
 async = require 'async'
 fs = require 'fs'
-#spawn_ = spawn
-#spawn = (args...) ->
-#	console.log 'Executing: ', args
-#	spawn_.apply null, args
+spawn_ = spawn
+spawn = (args...) ->
+	console.log 'Executing: ', args
+	spawn_.apply null, args
 path = require 'path'
 EventEmitter = require('events').EventEmitter
 require 'sugar'
@@ -26,7 +19,7 @@ class Builder extends EventEmitter
 	output_dir: null
 	sep: path.sep
 	
-	constructor: (@files, source_dir, output_dir) ->
+	constructor: (@files, source_dir, output_dir, @pack = no) ->
 		super
 		
 		@output_dir = path.resolve output_dir
@@ -36,7 +29,7 @@ class Builder extends EventEmitter
 		
 	prepareDirs: suspend.async ->
 		return if @build_dirs_created
-		dirs = ['cs2ts', 'dist', 'typed']
+		dirs = ['cs2ts', 'dist', 'typed', 'dist-pkg']
 		yield async.each dirs, (suspend.async (dir) =>
 				dir_path = @output_dir + @sep + dir
 				exists = yield fs.exists dir_path, suspend.resumeRaw()
@@ -91,12 +84,12 @@ class Builder extends EventEmitter
 		return @emit('aborted') if @clock isnt tick
 
 		# Compile
-		@proc = spawn "tsc", [
-			"#{__dirname}/../../typings/ecma.d.ts", 
-			"--module", "commonjs", 
-			"--declaration", 
-			"--noLib"]
-				.include(@tsFiles()),
+		@proc = spawn "#{__dirname}/../../node_modules/typescript/bin/tsc", [
+				"#{__dirname}/../../d.ts/ecma.d.ts", 
+				"--module", "commonjs", 
+				"--declaration", 
+				"--noLib"]
+					.include(@tsFiles()),
 			cwd: "#{@output_dir}/dist/"
 #		@proc.on 'error', console.log
 		@proc.stderr.setEncoding 'utf8'
@@ -109,6 +102,26 @@ class Builder extends EventEmitter
 			
 		yield @proc.on 'close', go()
 		return @emit('aborted') if @clock isnt tick
+
+		if @pack
+			module_name = (@pack.split ':')[-1..-1]
+			# Pack
+			@proc = spawn "#{__dirname}/../../node_modules/browserify/bin/cmd.js", [
+					"-r", "./#{@pack}", 
+					"--no-builtins",
+					"-o", "#{@output_dir}/dist-pkg/#{module_name}.js"],
+			cwd: "#{@output_dir}/dist/"
+			# @proc.on 'error', console.log
+			@proc.stderr.setEncoding 'utf8'
+			@proc.stderr.on 'data', (err) =>
+				# filter out the file path
+				remove = "#{@output_dir}#{@sep}dist"
+				while ~err.indexOf remove
+					err = err.replace remove, ''
+				process.stdout.write err
+				
+			yield @proc.on 'close', go()
+			return @emit('aborted') if @clock isnt tick
 		# return if not yield null
 	
 		# move compiled to dist

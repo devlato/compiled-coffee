@@ -2,24 +2,40 @@
 
 CompiledCoffee marries CoffeeScript with TypeScript's type system via the definition files.
 
+# Feautures
+- merges coffeescript classes with types from d.ts files
+- compiles with typescript
+- outputs compiled source and optionally a browserify commonjs module
+- watch for changes
+
 # Status
+
+Right now you can write typed classes and untyped (but compiled) mocha tests
+without any headache. Compiler auto-recompiles the code after file change.
 
 In the definition file you can type following:
 - class attributes
 - class methods
 - interfaces
 
-TODO are:
+Not yet here:
 - modules
 - functions
 - variables
 - constructor signature
 - default params' types
 
+Later:
+- config files for misc params
+- typing JS files
+- watching referenced definitions
+
 # Limitations to CoffeeScript 
+
 - all classes are exported (no `exports =`)
 - underscore dependency for ranges
 - no down ranges like [9..0]
+- details [at palantir/coffeescript-to-typescript https://github.com/palantir/coffeescript-to-typescript]
 
 # The flow
 

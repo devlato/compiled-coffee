@@ -8,13 +8,13 @@
 		"suspend": "latest",
 		"async": "latest",
 		"sugar": "latest",
-		"glob": "latest"
+		"glob": "latest",
+		"browserify": "latest"
 	},
 	"devDependencies": {
 		"coffeescript-generators": "almost/coffee-script",
-		"coffee-script": "latest",
-		"mocha": "*",
-		"expect.js": "*",
+		"mocha": "latest",
+		"expect.js": "latest",
 		"node-inspector": "strongloop/node-inspector"
 	}
 }
