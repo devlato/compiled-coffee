@@ -94,7 +94,7 @@ class Builder extends EventEmitter
 		@proc = spawn "tsc", [
 			"#{__dirname}/../../typings/ecma.d.ts", 
 			"--module", "commonjs", 
-			"--declarations", 
+			"--declaration", 
 			"--noLib"]
 				.include(@tsFiles()),
 			cwd: "#{@output_dir}/dist/"
