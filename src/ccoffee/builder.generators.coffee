@@ -5,10 +5,10 @@ spawn = require('child_process').spawn
 async = require 'async'
 fs = require 'fs'
 writestreamp = require 'writestreamp'
-spawn_ = spawn
-spawn = (args...) ->
-	console.log 'Executing: ', args
-	spawn_.apply null, args
+#spawn_ = spawn
+#spawn = (args...) ->
+#	console.log 'Executing: ', args
+#	spawn_.apply null, args
 path = require 'path'
 EventEmitter = require('events').EventEmitter
 require 'sugar'
