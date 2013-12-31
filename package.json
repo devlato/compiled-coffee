@@ -1,7 +1,7 @@
 {
 	"name": "compiled-coffee",
 	"author": "Tobiasz Cudnik <tobiasz.cudnik@gmail.com>",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"keywords": ["coffeescript", "typescript", "types", "compiler", "builder"],
 	"description": "CompiledCoffee marries CoffeeScript with TypeScript's type system via the definition files.",
 	"engines": {"node": ">=0.11"},
