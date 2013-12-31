@@ -2,7 +2,8 @@
 
 CompiledCoffee marries CoffeeScript with TypeScript's type system via the definition files.
 
-# Feautures
+# Features
+
 - merges coffeescript classes with types from d.ts files
 - compiles with typescript
 - outputs compiled source and optionally a browserify commonjs module
@@ -11,7 +12,9 @@ CompiledCoffee marries CoffeeScript with TypeScript's type system via the defini
 # Status
 
 Right now you can write typed classes and untyped (but compiled) mocha tests
-without any headache. Compiler auto-recompiles the code after file change.
+without any headache. Compiler auto-recompiles the code after a file change.
+
+Requires node --harmony (>=0.11) for the yield support.
 
 In the definition file you can type following:
 
@@ -30,8 +33,9 @@ Not yet here:
 Later:
 
 - config files for misc params
-- typing JS files
+- merging JS files with d.ts
 - watching referenced definitions
+- closure compiler output
 
 # Limitations to CoffeeScript 
 
