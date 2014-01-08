@@ -48,11 +48,6 @@ convert = (name) ->
 		(match, _1, _2, _3) ->
 			imports.push _2
 			"#{_1}import #{_2} = require(#{_3});"
-	if imports
-		for name in imports
-			source = source.replace (new RegExp "^(var[^;]+?)((, )?#{name})", 'm'), 
-				'$1'
-	source = source.replace "var ;", ''
 
 	# TODO remove coffeescript var intialization
 

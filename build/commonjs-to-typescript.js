@@ -28,20 +28,13 @@
   };
 
   convert = function(name) {
-    var imports, source, _i, _len;
+    var imports, source;
     source = fs.readFileSync(name, 'utf8');
     imports = [];
     source = source.replace(/(^|\n)(?:var\s)?(\w+)\s=\srequire\((['".\w/]+)\);?/g, function(match, _1, _2, _3) {
       imports.push(_2);
       return "" + _1 + "import " + _2 + " = require(" + _3 + ");";
     });
-    if (imports) {
-      for (_i = 0, _len = imports.length; _i < _len; _i++) {
-        name = imports[_i];
-        source = source.replace(new RegExp("^(var[^;]+?)((, )?" + name + ")", 'm'), '$1');
-      }
-    }
-    source = source.replace("var ;", '');
     source = source.replace(/(?:^|\n)(class|function|module )/g, "export $1");
     return source;
   };

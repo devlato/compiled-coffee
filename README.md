@@ -6,6 +6,7 @@ CompiledCoffee marries CoffeeScript with TypeScript's type system via the defini
 
 - merges coffeescript classes with types from d.ts files
 - compiles with typescript
+- all typed in d.ts files are optional and function inner vars' type is inferred
 - outputs compiled source and optionally a browserify commonjs module
 - watch for changes
 
@@ -24,11 +25,12 @@ In the definition file you can type following:
 
 Not yet here:
 
-- modules
-- functions
-- variables
 - constructor signature
 - default params' types
+- modules
+- enums
+- top level functions
+- top level variables
 
 Later:
 
@@ -39,8 +41,11 @@ Later:
 
 # Limitations to CoffeeScript 
 
+- vars are declared inline (not on the beginning of a function)
 - all classes are exported (no `exports =`)
-- underscore dependency for ranges
+- only simple requires are supported eg `foo = require('foo')` 
+  not `require('foo').bar` or `{foo} = require('foo')`
+- underscore dependency for ranges (need a manual require)
 - no down ranges like [9..0]
 - details [at palantir/coffeescript-to-typescript]( https://github.com/palantir/coffeescript-to-typescript)
 
