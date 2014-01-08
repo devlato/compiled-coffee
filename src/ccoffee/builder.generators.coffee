@@ -1,4 +1,3 @@
-Commands = require './commands'
 suspend = require 'suspend'
 go = suspend.resume
 spawn = require('child_process').spawn
@@ -30,7 +29,7 @@ class Builder extends EventEmitter
 		
 	prepareDirs: suspend.async ->
 		return if @build_dirs_created
-		dirs = ['cs2ts', 'dist', 'typed', 'dist-pkg']
+		dirs = ['cs2ts', 'dist', 'dist-pkg']
 		yield async.each dirs, (suspend.async (dir) =>
 				dir_path = @output_dir + @sep + dir
 				exists = yield fs.exists dir_path, suspend.resumeRaw()
@@ -47,9 +46,10 @@ class Builder extends EventEmitter
 		
 		yield @prepareDirs go()
 		
-		cmd = Commands.cs2ts @output_dir, @source_dir
 		# Coffee to TypeScript
-		@proc = spawn "#{__dirname}/../../#{cmd[0]}", cmd[1..-1], 
+		@proc = spawn "#{__dirname}/../../node_modules/coffee-script-to-" +
+			"typescript/bin/coffee",
+			['-cm', '-o', "#{@output_dir}/cs2ts", @source_dir],
 			cwd: @source_dir
 		@proc.on 'error', console.log
 		@proc.stderr.setEncoding 'utf8'
@@ -64,19 +64,8 @@ class Builder extends EventEmitter
 
 		# Merge definitions
 		@proc = spawn "#{__dirname}/../../bin/dts-merger", 
-			['--output', "../typed"].include(@tsFiles()),
-			cwd: "#{@output_dir}/cs2ts/"
-		@proc.on 'error', console.log
-		@proc.stderr.setEncoding 'utf8'
-		@proc.stderr.on 'data', (err) -> console.log err
-			
-		yield @proc.on 'close', go()
-		return @emit('aborted') if @clock isnt tick
-
-		# Fix modules
-		@proc = spawn "#{__dirname}/../../bin/commonjs-to-typescript", 
 			['--output', "../dist"].include(@tsFiles()),
-			cwd: "#{@output_dir}/typed/"
+			cwd: "#{@output_dir}/cs2ts/"
 		@proc.on 'error', console.log
 		@proc.stderr.setEncoding 'utf8'
 		@proc.stderr.on 'data', (err) -> console.log err

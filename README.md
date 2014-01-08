@@ -42,6 +42,7 @@ Later:
 # Limitations to CoffeeScript 
 
 - vars are declared inline (not on the beginning of a function)
+  this is tricky for eg loop assignments
 - all classes are exported (no `exports =`)
 - only simple requires are supported eg `foo = require('foo')` 
   not `require('foo').bar` or `{foo} = require('foo')`
