@@ -27,7 +27,6 @@ Not yet here:
 
 - constructor signature
 - default params' types
-- modules
 - enums
 - top level functions
 - top level variables
@@ -43,7 +42,9 @@ Later:
 
 - vars are declared inline (not on the beginning of a function)
   this is tricky for eg loop assignments
-- all classes are exported (no `exports =`)
+- right now. all top level elements are exported in TS and duplicated 
+  module.exports are needed if one plans also to compile it with regular
+  CoffeeScript
 - only simple requires are supported eg `foo = require('foo')` 
   not `require('foo').bar` or `{foo} = require('foo')`
 - underscore dependency for ranges (need a manual require)
