@@ -96,7 +96,7 @@
       if (this.clock !== tick) {
         return this.emit('aborted');
       }
-      this.proc = spawn("" + __dirname + "/../../node_modules/typescript/bin/tsc", ["" + __dirname + "/../../d.ts/ecma.d.ts", "--module", "commonjs", "--declaration", "--noLib"].include(this.tsFiles()), {
+      this.proc = spawn("" + __dirname + "/../../node_modules/typescript/bin/tsc", ["" + __dirname + "/../../d.ts/ecma.d.ts", "--module", "commonjs", "--declaration", "--sourcemap", "--noLib"].include(this.tsFiles()), {
         cwd: "" + this.output_dir + "/dist/"
       });
       this.proc.stderr.setEncoding('utf8');

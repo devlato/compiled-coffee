@@ -78,6 +78,7 @@ class Builder extends EventEmitter
 				"#{__dirname}/../../d.ts/ecma.d.ts", 
 				"--module", "commonjs", 
 				"--declaration", 
+				"--sourcemap", 
 				"--noLib"]
 					.include(@tsFiles()),
 			cwd: "#{@output_dir}/dist/"

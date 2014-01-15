@@ -3,9 +3,13 @@ export class One {
 
     private priv: string = null;
 
-    constructor(foo: string, bar: number) {}
+    constructor(foo: string, bar: number) {
+        this.b;
+    }
 
     public foo(): void {}
 }
 
-//exports.One = One
+/*
+//@ sourceMappingURL=one.map
+*/

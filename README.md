@@ -38,13 +38,14 @@ Later:
 - watching referenced definitions
 - closure compiler output
 
-# Limitations to CoffeeScript 
+# Differences to CoffeeScript 
 
 - vars are declared inline (not on the beginning of a function)
   this is tricky for eg loop assignments
 - right now. all top level elements are exported in TS and duplicated 
   module.exports are needed if one plans also to compile it with regular
   CoffeeScript
+- class properties are initialized in the constructor not in the prototype
 - only simple requires are supported eg `foo = require('foo')` 
   not `require('foo').bar` or `{foo} = require('foo')`
 - underscore dependency for ranges (need a manual require)

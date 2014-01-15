@@ -20,7 +20,6 @@ Things to merge
 	visibility (DONE)
 
 Later
-- modules
 - functions
 - properties
 */

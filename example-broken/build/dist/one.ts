@@ -1,4 +1,4 @@
-class One {
+export class One {
     public bar: string = "abc";
 
     private priv: string = null;

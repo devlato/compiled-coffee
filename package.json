@@ -18,6 +18,7 @@
 		"browserify": "latest",
 		"writestreamp": "latest"
 	},
+	"repository": "TobiaszCudnik/compiled-coffee",
 	"devDependencies": {
 		"coffeescript-generators": "almost/coffee-script",
 		"mocha": "latest",

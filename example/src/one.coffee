@@ -1,9 +1,8 @@
 class One
-	bar: 'abc'
-	priv: null
+  bar: 'abc'
+  priv: null
 
-	constructor: (foo, bar) ->
-
-	foo: ->
-
-#exports.One = One
+  constructor: (foo, bar) ->
+    @b
+	  
+  foo: ->

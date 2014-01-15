@@ -43,5 +43,11 @@ clean:
 	
 debugger:
 	./node_modules/node-inspector/bin/inspector.js
+	
+example-broken:
+	./bin/ccoffee -i example-broken/src -o example-broken/build
+	
+example:
+	./bin/ccoffee -i example/src -o example/build
 
-.PHONY: build test
+.PHONY: build test example example-broken

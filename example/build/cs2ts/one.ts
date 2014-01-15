@@ -1,11 +1,15 @@
-class One {
-    public bar = "abc";
+export class One {
+    bar = "abc";
 
-    public priv = null;
+    priv = null;
 
-    constructor(foo, bar) {}
+    constructor(foo, bar) {
+        this.b;
+    }
 
-    public foo() {}
+    foo() {}
 }
 
-//exports.One = One
+/*
+//@ sourceMappingURL=one.map
+*/
