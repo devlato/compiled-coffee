@@ -5,7 +5,7 @@ CompiledCoffee marries CoffeeScript with TypeScript's type system via the defini
 # Features
 
 - merge CoffeeScript classes with types from d.ts files
-- output TypeScript compilation result
+- output a TypeScript compilation result
 - all types in d.ts files are optional and function's inner vars' type is inferred
 - optionally output a [browserify](https://github.com/substack/node-browserify) CommonJS module
 - watch for changes (both the source and the d.ts files)
@@ -69,6 +69,7 @@ disappear in the future:
 - right now, all the top level elements are exported in TS and duplicated 
   module.exports is needed if one plans also to compile it with as a regular
   CoffeeScript
+- the d.ts file needs an indentation of 2 tabs or 4 spaces
 - class properties are initialized in the constructor, not in the prototype
 - only simple requires are supported eg `foo = require('foo')` 
   not `require('foo').bar` or `{foo} = require('foo')`
