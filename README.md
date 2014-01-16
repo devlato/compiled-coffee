@@ -4,13 +4,34 @@ CompiledCoffee marries CoffeeScript with TypeScript's type system via the defini
 
 # Features
 
-- merges coffeescript classes with types from d.ts files
-- compiles with typescript
-- all typed in d.ts files are optional and function inner vars' type is inferred
-- outputs compiled source and optionally a browserify commonjs module
-- watch for changes
+- merges CoffeeScript classes with types from d.ts files
+- compiles with TypeScript
+- all types in d.ts files are optional and function's inner vars' type is inferred
+- optionally output a [browserify](https://github.com/substack/node-browserify) commonjs module
+- watch for changes (both the source and the d.ts files)
 
-# Status
+# Installation
+
+```
+npm install compiled-coffee
+```
+
+# Usage
+
+```
+  Usage: ccoffee -i <src> -o <build>
+
+  Options:
+
+    -h, --help                     output usage information
+    -V, --version                  output the version number
+    -i, --source-dir <dir>         Input directory for the source files (required)
+    -o, --build-dir <dir>          Output directory for the built files (required)
+    -p, --pack <FILE:MODULE_NAME>  Creates a CJS browserify package
+    -w, --watch                    Watch for source files changes
+```
+
+# Types status
 
 Right now you can write typed classes and untyped (but compiled) mocha tests
 without any headache. Compiler auto-recompiles the code after a file change.
@@ -38,40 +59,21 @@ Later:
 - watching referenced definitions
 - closure compiler output
 
-# Differences to CoffeeScript 
+# Limitations
+
+There are some limitation you need to take into account. Some of them will 
+disappear in the future:
 
 - vars are declared inline (not on the beginning of a function)
   this is tricky for eg loop assignments
-- right now. all top level elements are exported in TS and duplicated 
-  module.exports are needed if one plans also to compile it with regular
+- right now, all the top level elements are exported in TS and duplicated 
+  module.exports is needed if one plans also to compile it with as a regular
   CoffeeScript
-- class properties are initialized in the constructor not in the prototype
+- class properties are initialized in the constructor, not in the prototype
 - only simple requires are supported eg `foo = require('foo')` 
   not `require('foo').bar` or `{foo} = require('foo')`
 - underscore dependency for ranges (need a manual require)
 - no down ranges like [9..0]
-- details [at palantir/coffeescript-to-typescript]( https://github.com/palantir/coffeescript-to-typescript)
-
-# Install
-
-```
-npm install compiled-coffee
-```
-
-# Usage
-
-```
-  Usage: ccoffee -i <src> -o <build>
-
-  Options:
-
-    -h, --help                     output usage information
-    -V, --version                  output the version number
-    -i, --source-dir <dir>         Input directory for source files
-    -o, --build-dir <dir>          Output directory for built files
-    -p, --pack <FILE:MODULE_NAME>  Creates a CJS browserify package
-    -w, --watch                    Watch for source files changes
-```
 
 # The flow
 

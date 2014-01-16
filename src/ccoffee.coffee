@@ -12,8 +12,10 @@ params
   .usage('-i <src> -o <build>')
 #	.option('-w, --watch', 'Watch for file changes')
 #	.option('-l, --log', 'Show logging information')
-	.option('-i, --source-dir <dir>', 'Input directory for source files')
-	.option('-o, --build-dir <dir>', 'Output directory for built files')
+	.option('-i, --source-dir <dir>', 
+		'Input directory for the source files (required)')
+	.option('-o, --build-dir <dir>', 
+		'Output directory for the built files (required)')
 	.option('-p, --pack <FILE:MODULE_NAME>', 'Creates a CJS browserify package')
 	.option('-w, --watch', 'Watch for source files changes')
 	.parse(process.argv)
