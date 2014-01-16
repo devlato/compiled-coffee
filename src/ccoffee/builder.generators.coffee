@@ -43,6 +43,7 @@ class Builder extends EventEmitter
 
 	build: suspend.async ->
 		tick = ++@clock
+		error = no
 		
 		yield @prepareDirs go()
 		
@@ -51,16 +52,18 @@ class Builder extends EventEmitter
 			"typescript/bin/coffee",
 			['-cm', '-o', "#{@output_dir}/cs2ts", @source_dir],
 			cwd: @source_dir
-		@proc.on 'error', console.log
 		@proc.stderr.setEncoding 'utf8'
-		@proc.stderr.on 'data', (err) -> console.log err
+		@proc.stderr.on 'data', (err) ->
+			error = yes
+			process.stdout.write err
 			
-		yield @proc.on 'close', go()
-		return @emit('aborted') if @clock isnt tick
+		yield @proc.on 'exit', go()
+		throw new CoffeeScriptError if error
+		return @emit 'aborted' if @clock isnt tick
 		
 		# Copy definitions
 		yield async.map @files, (@copyDefinitionFiles.bind @), go()
-		return @emit('aborted') if @clock isnt tick
+		return @emit 'aborted' if @clock isnt tick
 
 		# Merge definitions
 		@proc = spawn "#{__dirname}/../../bin/dts-merger", 
@@ -71,7 +74,7 @@ class Builder extends EventEmitter
 		@proc.stderr.on 'data', (err) -> console.log err
 			
 		yield @proc.on 'close', go()
-		return @emit('aborted') if @clock isnt tick
+		return @emit 'aborted' if @clock isnt tick
 
 		# Compile
 		@proc = spawn "#{__dirname}/../../node_modules/typescript/bin/tsc", [
@@ -82,7 +85,6 @@ class Builder extends EventEmitter
 				"--noLib"]
 					.include(@tsFiles()),
 			cwd: "#{@output_dir}/dist/"
-#		@proc.on 'error', console.log
 		@proc.stderr.setEncoding 'utf8'
 		@proc.stderr.on 'data', (err) =>
 			# filter out the file path
@@ -91,8 +93,10 @@ class Builder extends EventEmitter
 				err = err.replace remove, ''
 			process.stdout.write err
 			
-		yield @proc.on 'close', go()
-		return @emit('aborted') if @clock isnt tick
+		try yield @proc.on 'close', go()
+		catch e
+			throw new TypeScriptError
+		return @emit 'aborted' if @clock isnt tick
 
 		if @pack
 			module_name = (@pack.split ':')[-1..-1]
@@ -112,12 +116,7 @@ class Builder extends EventEmitter
 				process.stdout.write err
 				
 			yield @proc.on 'close', go()
-			return @emit('aborted') if @clock isnt tick
-		# return if not yield null
-	
-		# move compiled to dist
-#		yield async.each @files, (@moveCompiledFiles.bind @), go()
-#		return @emit('aborted') if @clock isnt tick
+			return @emit 'aborted' if @clock isnt tick
 		
 		@proc = null
 		
@@ -147,21 +146,35 @@ class Builder extends EventEmitter
 	clean: ->
 		throw new Error 'not implemented'
 		
-	reload: ->
-		console.log '-'.repeat 20
+	reload: suspend.async (refreshed) ->
+		console.log '-'.repeat 20 if refreshed
 		@proc?.kill()
-		@build ->
-			console.log "Compilation completed"
+		error = no
+		try yield @build go()
+		catch e
+			throw e if e not instanceof TypeScriptError \
+				and e not instanceof CoffeeScriptError 
+			error = yes
+		console.log "Compilation completed" if not error
 		
-	watch: -> 
+	watch: suspend.async -> 
 		for file in @files
 			node = @source_dir + @sep + file
-			fs.watchFile node, persistent: yes, interval: 500, (@reload.bind @)
+			fs.watchFile node, persistent: yes, interval: 500, => 
+				@reload yes, ->
 		for file in @dtsFiles()
 			node = @source_dir + @sep + file
 			continue if not fs.existsSync node
-			fs.watchFile node, persistent: yes, interval: 500, (@reload.bind @)
-		@build ->
-			console.log "Compilation completed"
+			fs.watchFile node, persistent: yes, interval: 500, => 
+				@reload yes, ->
+		yield @reload no, go()
 
 module.exports = Builder
+
+class TypeScriptError extends Error
+	constructor: ->
+		super 'TypeScript compilation error'
+		
+class CoffeeScriptError extends Error
+	constructor: ->
+		super 'CoffeeScript compilation error'

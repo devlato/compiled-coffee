@@ -29,7 +29,7 @@ main = suspend ->
 	
 	# run
 	if params.watch
-		builder.watch()
+		yield builder.watch go()
 	else 
 		yield builder.build go()
 		console.log "Compilation completed"

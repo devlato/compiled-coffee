@@ -28,7 +28,7 @@
     assert(files.length, "No files to precess found");
     builder = new Builder(files, params.sourceDir, params.buildDir, params.pack);
     if (params.watch) {
-      return builder.watch();
+      return yield builder.watch(go());
     } else {
       yield builder.build(go());
       return console.log("Compilation completed");
