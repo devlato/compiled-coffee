@@ -4,10 +4,10 @@ CompiledCoffee marries CoffeeScript with TypeScript's type system via the defini
 
 # Features
 
-- merges CoffeeScript classes with types from d.ts files
-- compiles with TypeScript
+- merge CoffeeScript classes with types from d.ts files
+- output TypeScript compilation result
 - all types in d.ts files are optional and function's inner vars' type is inferred
-- optionally output a [browserify](https://github.com/substack/node-browserify) commonjs module
+- optionally output a [browserify](https://github.com/substack/node-browserify) CommonJS module
 - watch for changes (both the source and the d.ts files)
 
 # Installation
