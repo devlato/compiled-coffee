@@ -75,6 +75,15 @@ disappear in the future:
   not `require('foo').bar` or `{foo} = require('foo')`
 - underscore dependency for ranges (need a manual require)
 - no down ranges like [9..0]
+- double source map (CS -> TS -> JS) and lack of a shift on double d.ts lines
+
+# Issues
+
+- Following will cause a stack overflow
+```
+a = ->
+  b = -> 1
+```
 
 # The flow
 
