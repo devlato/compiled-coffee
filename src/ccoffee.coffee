@@ -17,17 +17,23 @@ params
 	.option('-o, --build-dir <dir>', 
 		'Output directory for the built files (required)')
 	.option('-p, --pack <FILE:MODULE_NAME>', 'Creates a CJS browserify package')
-	.option('-w, --watch', 'Watch for source files changes')
+	.option('-w, --watch', 'Watch for the source files changes')
+	.option('-y, --yield', 'Support the yield (generators) syntax (currently' +
+			' doesn\'t work with --pack)')
 	.parse(process.argv)
 
 if not params.sourceDir or not params.buildDir 
+	return params.help()
+
+if params.yield and params.pack 
 	return params.help()
 
 main = suspend ->
 	# TODO doesnt glob subdirs?
 	files = yield glob '**/*.coffee', {cwd: params.sourceDir}, go()
 	assert files.length, "No files to precess found"
-	builder = new Builder files, params.sourceDir, params.buildDir, params.pack
+	builder = new Builder files, params.sourceDir, params.buildDir, params.pack,
+		params.yield
 	
 	# run
 	if params.watch

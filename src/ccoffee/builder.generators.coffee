@@ -2,8 +2,12 @@ suspend = require 'suspend'
 go = suspend.resume
 spawn = require('child_process').spawn
 async = require 'async'
+# TODO why this doesnt work? :O
+#ts_yield = require 'typescript-yield'
+ts_yield = require '../../node_modules/typescript-yield/build/ts-yield.js'
 fs = require 'fs'
 writestreamp = require 'writestreamp'
+mergeDefinition = require('../dts-merger/merger').merge
 #spawn_ = spawn
 #spawn = (args...) ->
 #	console.log 'Executing: ', args
@@ -12,6 +16,7 @@ path = require 'path'
 EventEmitter = require('events').EventEmitter
 require 'sugar'
 
+# TODO fix constructor params
 class Builder extends EventEmitter
 	clock: 0
 	build_dirs_created: no
@@ -19,7 +24,7 @@ class Builder extends EventEmitter
 	output_dir: null
 	sep: path.sep
 	
-	constructor: (@files, source_dir, output_dir, @pack = no) ->
+	constructor: (@files, source_dir, output_dir, @pack = no, @yield = no) ->
 		super
 		
 		@output_dir = path.resolve output_dir
@@ -30,6 +35,7 @@ class Builder extends EventEmitter
 	prepareDirs: suspend.async ->
 		return if @build_dirs_created
 		dirs = ['cs2ts', 'dist', 'dist-pkg']
+		dirs.push 'dist-pkg' if @pack
 		yield async.each dirs, (suspend.async (dir) =>
 				dir_path = @output_dir + @sep + dir
 				exists = yield fs.exists dir_path, suspend.resumeRaw()
@@ -60,23 +66,13 @@ class Builder extends EventEmitter
 		yield @proc.on 'exit', go()
 		throw new CoffeeScriptError if error
 		return @emit 'aborted' if @clock isnt tick
-		
-		# Copy definitions
-		yield async.map @files, (@copyDefinitionFiles.bind @), go()
-		return @emit 'aborted' if @clock isnt tick
-
-		# Merge definitions
-		@proc = spawn "#{__dirname}/../../bin/dts-merger", 
-			['--output', "../dist"].include(@tsFiles()),
-			cwd: "#{@output_dir}/cs2ts/"
-		@proc.on 'error', console.log
-		@proc.stderr.setEncoding 'utf8'
-		@proc.stderr.on 'data', (err) -> console.log err
-			
-		yield @proc.on 'close', go()
+				
+		# Process definition merging and other source manipulation
+		yield async.map @files, (@processSource.bind @), go()
 		return @emit 'aborted' if @clock isnt tick
 
 		# Compile
+		# TODO use tss tools
 		@proc = spawn "#{__dirname}/../../node_modules/typescript/bin/tsc", [
 				"#{__dirname}/../../d.ts/ecma.d.ts", 
 				"--module", "commonjs", 
@@ -97,6 +93,10 @@ class Builder extends EventEmitter
 		catch e
 			throw new TypeScriptError
 		return @emit 'aborted' if @clock isnt tick
+				
+		# Process definition merging and other source manipulation
+		yield async.map @files, (@processBuiltSource.bind @), go()
+		return @emit 'aborted' if @clock isnt tick
 
 		if @pack
 			module_name = (@pack.split ':')[-1..-1]
@@ -104,6 +104,7 @@ class Builder extends EventEmitter
 			@proc = spawn "#{__dirname}/../../node_modules/browserify/bin/cmd.js", [
 					"-r", "./#{@pack}", 
 					"--no-builtins",
+					"--insert-globals",
 					"-o", "#{@output_dir}/dist-pkg/#{module_name}.js"],
 			cwd: "#{@output_dir}/dist/"
 			# @proc.on 'error', console.log
@@ -126,19 +127,46 @@ class Builder extends EventEmitter
 	dtsFiles: -> 
 		files = (file.replace @coffee_suffix, '.d.ts' for file in @files)
 		
-#	moveCompiledFiles: (file, next) ->
-#		new_name = file.replace @coffee_suffix, '.js'
-#		fs.rename "#{@output_dir}/typescript/#{new_name}", 
-#			"#{@output_dir}/dist/#{new_name}", next
+	processSource: suspend.async (file) ->
+		source = yield @mergeDefinition file, go()
+		yield @writeDistTsFile file, source, go()
 		
-	copyDefinitionFiles: (file, next) ->
-		# TODO create dirs in the output
+	processBuiltSource: suspend.async (file) ->
+		js_file = file.replace @coffee_suffix, '.js'
+		source = yield fs.readFile ([@output_dir, 'dist', js_file].join @sep), 
+			{encoding: 'utf8'}, go()
+		source = @transpileYield source if @yield
+		yield @writeDistJsFile file, source, go()
+		
+	transpileYield: (source) ->
+		ts_yield.markGenerators ts_yield.unwrapYield source
+		
+	writeDistTsFile: suspend.async (file, source) ->
+		ts_file = file.replace @coffee_suffix, '.ts'
+		destination = writestreamp "#{@output_dir}/dist/#{ts_file}"
+		yield destination.end source, 'utf8', go()
+		
+	writeDistJsFile: suspend.async (file, source) ->
+		js_file = file.replace @coffee_suffix, '.js'
+		destination = writestreamp "#{@output_dir}/dist/#{js_file}"
+		yield destination.end source, 'utf8', go()
+		
+	mergeDefinition: suspend.async (file) ->
 		dts_file = file.replace @coffee_suffix, '.d.ts'
-		# TODO async
-		return next() if not fs.existsSync @source_dir + @sep + dts_file
-		destination = writestreamp "#{@output_dir}/cs2ts/#{dts_file}"
-		destination.on 'close', next
-		(fs.createReadStream @source_dir + @sep + dts_file).pipe destination
+		ts_file = file.replace @coffee_suffix, '.ts'
+		# no definition file, copy the transpiled source directly
+		exists = yield fs.exists @source_dir + @sep + dts_file, suspend.resumeRaw()
+		if not exists
+			yield fs.readFile ([@output_dir, 'cs2ts', ts_file].join @sep), 
+				{encoding: 'utf8'}, go()
+		# read both the source and the definition, then merge and write
+		else
+			fs.readFile ([@output_dir, 'cs2ts', ts_file].join @sep), encoding: 'utf8', 
+				suspend.fork()
+			fs.readFile @source_dir + @sep + dts_file, encoding: 'utf8', 
+				suspend.fork()
+			data = yield suspend.join()
+			mergeDefinition data[0], data[1]
 
 	close: ->
 		@proc?.kill()
@@ -164,7 +192,9 @@ class Builder extends EventEmitter
 				@reload yes, ->
 		for file in @dtsFiles()
 			node = @source_dir + @sep + file
-			continue if not fs.existsSync node
+			# TODO watch parent dirs for non yet existing d.ts files
+			exists = yield fs.exists node, suspend.resumeRaw()
+			continue if not exists
 			fs.watchFile node, persistent: yes, interval: 500, => 
 				@reload yes, ->
 		yield @reload no, go()

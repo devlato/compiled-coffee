@@ -44,10 +44,20 @@ clean:
 debugger:
 	./node_modules/node-inspector/bin/inspector.js
 	
-example-broken:
-	./bin/ccoffee -i example-broken/src -o example-broken/build
+example-simple-broken:
+	./bin/ccoffee -i examples/simple-broken/src -o examples/simple-broken/build
 	
-example:
-	./bin/ccoffee -i example/src -o example/build
+example-simple:
+	./bin/ccoffee -i examples/simple/src -o examples/simple/build
+	
+example-promises:
+	./bin/ccoffee -i examples/promises/src -o examples/promises/build
+	
+example-yield:
+	./bin/ccoffee \
+		-i examples/yield/src \
+		-o examples/yield/build \
+		--yield \
+		--watch
 
 .PHONY: build test example example-broken

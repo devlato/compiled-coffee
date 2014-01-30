@@ -2,7 +2,7 @@ var One = (function () {
     function One(foo, bar) {
         this.bar = "abc";
         this.priv = null;
-        this.b;
+        this.bar;
     }
     One.prototype.foo = function () {
     };

@@ -1,4 +1,4 @@
 # DTS Merger
-- merge all types from a definiton file (also the ones non existing in the 
-		source!)
+- support rest of the TS language parts
+- copy referenced definitions
 - fix CS->TS source map

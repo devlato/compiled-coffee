@@ -9,6 +9,8 @@ CompiledCoffee marries CoffeeScript with TypeScript's type system via the defini
 - all types in d.ts files are optional and function's inner vars' type is inferred
 - optionally output a [browserify](https://github.com/substack/node-browserify) CommonJS module
 - watch for changes (both the source and the d.ts files)
+- compilation is optional, backward-compatible with regular CoffeeScript
+- supports yield with type safety for both params and return values (some d.ts changes needed)
 
 # Installation
 
@@ -65,11 +67,13 @@ There are some limitation you need to take into account. Some of them will
 disappear in the future:
 
 - vars are declared inline (not on the beginning of a function)
-  this is tricky for eg loop assignments
+  This is tricky for eg loop assignments. Also `a = b = null` wont work.
+- only CommonJS d.ts files are supported (which means string module names)
 - right now, all the top level elements are exported in TS and duplicated 
   module.exports is needed if one plans also to compile it with as a regular
   CoffeeScript
 - the d.ts file needs an indentation of 2 tabs or 4 spaces
+- referenced d.ts files has a base dir from BUILD_DIR/dist
 - class properties are initialized in the constructor, not in the prototype
 - only simple requires are supported eg `foo = require('foo')` 
   not `require('foo').bar` or `{foo} = require('foo')`
@@ -84,6 +88,17 @@ disappear in the future:
 a = ->
   b = -> 1
 ```
+- yield in IF statements doesn't work
+
+# Roadmap
+
+- Full support for exports
+- Merge currently unsupported d.ts definitions
+- Update to CoffeeScript 1.7
+- Merge yield support from [coffy-script](https://github.com/loveencounterflow/coffy-script)
+- Source maps support
+- Compiler speed improvements
+- Use Closure Compiler as a proper linker
 
 # The flow
 
