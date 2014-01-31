@@ -1,22 +1,32 @@
-export function resume() {}
-
 export class One {
-    bar = "abc";
+    string_attr = "abc";
 
-    priv = null;
+    number_attr = null;
 
-    constructor(foo, bar) {
-        this.bar = yield(this.test(resume());
+    priv_attr = null;
+
+    constructor(string_attr, number_attr) {
+        this.string_attr = string_attr;
+        this.number_attr = number_attr;
+        this.method();
     }
 
-    test(foo, next) {}
-
-next()
-
-
-
-    foo() {}
+    method() {
+        return this.string_attr + this.number_attr;
+    }
 }
+
+export class Two extends One {
+    method(str) {
+        return this.string_attr + str + this.number_attr;
+    }
+}
+
+export var one = new One("foo", 123);
+export var two = new Two("foo", 123);
+
+one.method().replace(/foo/, "bar");
+(two.method("bar")).replace(/bar/, "foo");
 
 /*
 //@ sourceMappingURL=one.map

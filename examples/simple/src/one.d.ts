@@ -1,6 +1,13 @@
 class One {
-    constructor(foo: string, bar: number);
-    public foo(): void;
-    public bar: string;
-    private priv: string;
+    string_attr: string;
+    number_attr: number;
+    private priv_attr: any;
+
+		constructor(string_attr: string, number_attr: number);
+	
+		method(): string;
+}
+
+class Two {
+		method(str?: string): string;
 }

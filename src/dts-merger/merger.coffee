@@ -1,5 +1,8 @@
 """
 Merge default values (found in TS files).
+
+TODO:
+constructor: (@string_attr, @number_attr) ->
 """
 
 

@@ -34,7 +34,7 @@ class Builder extends EventEmitter
 		
 	prepareDirs: suspend.async ->
 		return if @build_dirs_created
-		dirs = ['cs2ts', 'dist', 'dist-pkg']
+		dirs = ['cs2ts', 'dist']
 		dirs.push 'dist-pkg' if @pack
 		yield async.each dirs, (suspend.async (dir) =>
 				dir_path = @output_dir + @sep + dir
@@ -72,7 +72,7 @@ class Builder extends EventEmitter
 		return @emit 'aborted' if @clock isnt tick
 
 		# Compile
-		# TODO use tss tools
+		# TODO use tss tools or typescript.api (keep all in memory)
 		@proc = spawn "#{__dirname}/../../node_modules/typescript/bin/tsc", [
 				"#{__dirname}/../../d.ts/ecma.d.ts", 
 				"--module", "commonjs", 

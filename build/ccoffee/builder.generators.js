@@ -56,7 +56,7 @@
       if (this.build_dirs_created) {
         return;
       }
-      dirs = ['cs2ts', 'dist', 'dist-pkg'];
+      dirs = ['cs2ts', 'dist'];
       if (this.pack) {
         dirs.push('dist-pkg');
       }

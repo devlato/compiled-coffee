@@ -45,13 +45,20 @@ debugger:
 	./node_modules/node-inspector/bin/inspector.js
 	
 example-simple-broken:
-	./bin/ccoffee -i examples/simple-broken/src -o examples/simple-broken/build
+	./bin/ccoffee \
+		-i examples/simple-broken/src \
+		-o examples/simple-broken/build
 	
 example-simple:
-	./bin/ccoffee -i examples/simple/src -o examples/simple/build
+	./bin/ccoffee \
+		-i examples/simple/src \
+		-o examples/simple/build \
+		--watch
 	
 example-promises:
-	./bin/ccoffee -i examples/promises/src -o examples/promises/build
+	./bin/ccoffee \
+		-i examples/promises/src \
+		-o examples/promises/build
 	
 example-yield:
 	./bin/ccoffee \

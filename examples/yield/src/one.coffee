@@ -1,5 +1,6 @@
 #/ <reference path="../../../../node_modules/typescript-yield/d.ts/suspend.d.ts"/>
 #/ <reference path="../../../../d.ts/node.d.ts"/>
+#/ <reference path="../../../../d.ts/console.d.ts"/>
 
 suspend = require 'suspend'
 
@@ -28,3 +29,4 @@ suspend.run ->
 	yield one.test 'foo', resume()
 	# this would create a compiler error
 	# yield one.test 10, resume()
+	console.log one.numeric_attr

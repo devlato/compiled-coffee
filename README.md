@@ -80,6 +80,7 @@ disappear in the future:
 - underscore dependency for ranges (need a manual require)
 - no down ranges like [9..0]
 - double source map (CS -> TS -> JS) and lack of a shift on double d.ts lines
+- no casting (\`\` syntax won't work, which is sad)
 
 # Issues
 
