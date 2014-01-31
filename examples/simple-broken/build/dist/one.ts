@@ -14,7 +14,7 @@ export class One {
         this.method2();
     }
 
-    method(): string {
+    	method(): string {
         return this.string_attr / this.number_attr;
     }
 }

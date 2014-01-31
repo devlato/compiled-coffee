@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "one.ts",
+  "sourceRoot": "../../src",
+  "sources": [
+    "one.coffee"
+  ],
+  "names": [],
+  "mappings": ";;;;GAOc,CAAb;;GACa,CAAb;;GACW,CAAX;;CAEc,CAAa,EAA3B;CACC,EAAe,CAAd,IAAD,GAAA;CAAA,EACe,CAAd,IAAD,GAAA;CADA,GAEC,GAAD,CAAA;;;CAEO,GAAR,EAAQ;CAAI,EAAc,CAAd,OAAD,IAAA;KAAH;;;SAES;CACR,EAAD,CAAR,EAAQ;CAAU,EAAc,CAAd,OAAD,IAAA;KAAT;;;CAEK,CAAK,CAAT,CAAA,CAAA;CACI,CAAO,CAAX,CAAA,CAAA;;CAEN,CAAwB,CAAzB;CACK,EAAO,IAAR;CACN,CAAiC,CAA9B,EAAH,CAAA"
+}
