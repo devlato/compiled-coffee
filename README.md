@@ -1,16 +1,24 @@
 # CompiledCoffee
 
-CompiledCoffee marries CoffeeScript with TypeScript's type system via the definition files.
+Do you like the type safety of TypeScript and the concise syntax of 
+CoffeeScript? In that case CompiledCoffee if for you! It combines CoffeeScript 
+with TypeScript's type system via the definition files. You create a *.coffee 
+file and a *.d.ts file with the same name, in which you (optionally) type 
+stuff. Rest is handled automatically.
 
 # Features
 
-- merge CoffeeScript classes with types from d.ts files
-- output a TypeScript compilation result
-- all types in d.ts files are optional and function's inner vars' type is inferred
-- optionally output a [browserify](https://github.com/substack/node-browserify) CommonJS module
-- watch for changes (both the source and the d.ts files)
-- compilation is optional, backward-compatible with regular CoffeeScript
-- supports yield with type safety for both params and return values (some d.ts changes needed)
+- merges CoffeeScript classes with types from d.ts files
+- outputs a TypeScript compilation results
+- all types in d.ts files are optional and function's inner vars' types are
+ inferred
+- optionally outputs a [browserify](https://github.com/substack/node-browserify) 
+ CommonJS module
+- watches for changes (both the source and the d.ts files)
+- compilation is optional, source is backward-compatible with regular 
+ CoffeeScript
+- supports yield with type safety for both params and return/callback values 
+ (some d.ts changes needed)
 
 # Installation
 
@@ -30,10 +38,11 @@ npm install compiled-coffee
     -i, --source-dir <dir>         Input directory for the source files (required)
     -o, --build-dir <dir>          Output directory for the built files (required)
     -p, --pack <FILE:MODULE_NAME>  Creates a CJS browserify package
-    -w, --watch                    Watch for source files changes
+    -w, --watch                    Watch for the source files changes
+    -y, --yield                    Support the yield (generators) syntax (currently doesn't work with --pack)
 ```
 
-# Types status
+# Status
 
 Right now you can write typed classes and untyped (but compiled) mocha tests
 without any headache. Compiler auto-recompiles the code after a file change.
@@ -54,32 +63,26 @@ Not yet here:
 - top level functions
 - top level variables
 
-Later:
-
-- config files for misc params
-- merging JS files with d.ts
-- watching referenced definitions
-- closure compiler output
-
 # Limitations
 
-There are some limitation you need to take into account. Some of them will 
+There are some limitations you need to take into account. Some of them will 
 disappear in the future:
 
 - vars are declared inline (not on the beginning of a function)
   This is tricky for eg loop assignments. Also `a = b = null` wont work.
 - only CommonJS d.ts files are supported (which means string module names)
 - right now, all the top level elements are exported in TS and duplicated 
-  module.exports is needed if one plans also to compile it with as a regular
+  module.exports is needed if one plans to compile it with as a regular
   CoffeeScript
-- the d.ts file needs an indentation of 2 tabs or 4 spaces
-- referenced d.ts files has a base dir from BUILD_DIR/dist
+- *d.ts files need an indentation of 2 tabs or 4 spaces*
+- referenced d.ts files have a base dir from BUILD_DIR/dist
 - class properties are initialized in the constructor, not in the prototype
 - only simple requires are supported eg `foo = require('foo')` 
   not `require('foo').bar` or `{foo} = require('foo')`
-- underscore dependency for ranges (need a manual require)
+- underscore dependency for ranges (needs a manual require)
 - no down ranges like [9..0]
-- double source map (CS -> TS -> JS) and lack of a shift on double d.ts lines
+- double source map (CS -> TS -> JS) and lack of a shift on >1 line d.ts 
+ signatures
 - no casting (\`\` syntax won't work, which is sad)
 
 # Issues
@@ -99,6 +102,7 @@ a = ->
 - Merge yield support from [coffy-script](https://github.com/loveencounterflow/coffy-script)
 - Source maps support
 - Compiler speed improvements
+- Merging d.ts with plain JS files
 - Use Closure Compiler as a proper linker
 
 # The flow
