@@ -1,0 +1,15 @@
+/one.ts(12,9): error TS2011: Cannot convert 'number' to 'string'.
+/one.ts(13,9): error TS2011: Cannot convert 'string' to 'number'.
+/one.ts(14,14): error TS2094: The property 'method2' does not exist on value of type 'One'.
+/one.ts(18,16): error TS2011: Cannot convert 'number' to 'string'.
+/one.ts(18,16): error TS2113: The left-hand side of an arithmetic operation must be of type 'any', 'number' or an enum type.
+/one.ts(22,14): error TS2141: Class 'Two' cannot extend class 'One':
+        Types of property 'method' of types 'Two' and 'One' are incompatible:
+                Call signatures of types '(str: string) => string' and '() => string' are incompatible:
+                        Call signature expects 0 or fewer parameters.
+/one.ts(24,16): error TS2011: Cannot convert 'number' to 'string'.
+/one.ts(24,16): error TS2113: The left-hand side of an arithmetic operation must be of type 'any', 'number' or an enum type.
+/one.ts(24,35): error TS2112: The right-hand side of an arithmetic operation must be of type 'any', 'number' or an enum type.
+/one.ts(28,22): error TS2082: Supplied parameters do not match any signature of call target:
+        Could not apply type 'string' to argument 1 which is of type 'number'.
+/one.ts(28,22): error TS2085: Could not select overload for 'new' expression.
