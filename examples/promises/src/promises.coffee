@@ -1,32 +1,46 @@
-#/<reference path="../../d.ts/rsvp.d.ts" />
+#/<reference path="../../d.ts/es6-promise.d.ts" />
+#/<reference path="../../../../d.ts/node.d.ts" />
+#/<reference path="../../../../d.ts/console.d.ts" />
 
-rsvp = require 'rsvp'
+es6_promise = require 'es6-promise'
+Promise = es6_promise.Promise
  
-class Foo
-	constructor: (@a, @b, @c) ->
+class PromiseExample
+	string: null
+	number: null
+	object: null
+	
+	constructor: (string, number) ->
+		@string = string
+		@number = number
 		
-	foo: (val) ->
-		deferred = rsvp.defer()
-		setTimeout (deferred.resolve @a, val), 0
-		return deferred.promise.then cb
+	stringPromise: (string) ->
+		new Promise (resolve) =>
+			setTimeout (-> resolve @string + string), 0
 		
-	bar: (val) ->
-		deferred = rsvp.defer()
-		setTimeout (deferred.resolve @b, val), 0
-		return deferred.promise.then cb
+	numberPromise: (string) ->
+		new Promise (resolve) =>
+			converted = parseInt string
+			setTimeout (-> resolve @number + converted), 0
 		
-	baz: (val) ->
-		deferred = rsvp.defer()
-		setTimeout (deferred.resolve @c, val), 0
-		return deferred.promise.then cb
+	objectPromise: (number) ->
+		new Promise @objectPromiseResolver.bind @, number
+			
+	# This is needed if we want to have a fully typed resolver
+	objectPromiseResolver: (number, resolve) ->
+		setTimeout (-> resolve new TestClass number), 0
+			
+	printResult: (object) ->
+		console.log object.result
 		
-foo = new Foo 'a', 'b', 'c'
-foo.foo 'foo'
-	.then (a, prev) ->
-		console.log prev
-		foo.bar 'bar'
-	.then (b, prev) ->
-		console.log prev 
-		foo.baz 'baz'
-	.then (c, prev) -> 
-		console.log prev
+class TestClass
+	result: null
+	
+	constructor: (number) ->
+		@result = number * 2
+		
+example = new PromiseExample '15', 100
+example.stringPromise('0')
+	.then(example.numberPromise)
+	.then(example.objectPromise)
+	.then(example.printResult);

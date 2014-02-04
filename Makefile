@@ -58,7 +58,8 @@ example-simple:
 example-promises:
 	./bin/ccoffee \
 		-i examples/promises/src \
-		-o examples/promises/build
+		-o examples/promises/build \
+		--watch
 	
 example-yield:
 	./bin/ccoffee \

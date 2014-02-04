@@ -29,9 +29,9 @@
   };
 
   merge = function(source, definition) {
-    var config, def, regexp, regexps;
-    config = {
-      indent: '(?:^|\\n)(?:\\s{4}|\\t{2})'
+    var INDENT, def, regexp, regexps;
+    INDENT = function(tabs) {
+      return "(?:^|\\n)(?:\\s{" + (tabs * 2) + "}|\\t{" + tabs + "})";
     };
     regexps = {
       CLASS: function(name) {
@@ -40,25 +40,29 @@
         }
         return new RegExp("class\\s(" + name + ")((?:\\n|.)+?)(?:\\n\\})", 'ig');
       },
-      METHOD: function(name) {
+      METHOD: function(indent, name) {
         if (name == null) {
           name = '[\\w$]+';
         }
-        return new RegExp("(" + config.indent + ")((?:(?:public|private)\\s)?(" + name + ")(?=\\()((?:\\n|[^=])+?))(?:\\s?\\{)", 'ig');
+        indent = INDENT(indent);
+        return new RegExp("(" + indent + ")((?:(?:public|private)\\s)?(" + name + ")(?=\\()((?:\\n|[^=])+?))(?:\\s?\\{)", 'ig');
       },
-      ATTRIBUTE: function(name) {
+      ATTRIBUTE: function(indent, name) {
         if (name == null) {
           name = '[\\w$]+';
         }
-        return new RegExp("(" + config.indent + ")((?:(?:public|private)\\s)?(" + name + ")(?=:|=|;|\\s)((?:\\n|[^(])+?))(?:\\s?(=|;))", 'ig');
+        indent = INDENT(indent);
+        return new RegExp("(" + indent + ")((?:(?:public|private)\\s)?(" + name + ")(?=:|=|;|\\s)((?:\\n|[^(])+?))(?:\\s?(=|;))", 'ig');
       },
-      METHOD_DEF: function(name) {
+      METHOD_DEF: function(indent, name) {
         name = RegExpQuote(name);
-        return new RegExp("" + config.indent + "((?:public|private)?\\s?(" + name + ")(?=\\()(?:\\n|.)+?)(\\s?;)", 'ig');
+        indent = INDENT(indent);
+        return new RegExp("" + indent + "((?:public|private)?\\s?(" + name + ")(?=\\()(?:\\n|.)+?)(\\s?;)", 'ig');
       },
-      ATTRIBUTE_DEF: function(name) {
+      ATTRIBUTE_DEF: function(indent, name) {
         name = RegExpQuote(name);
-        return new RegExp("" + config.indent + "((?:public|private)?\\s?(" + name + ")(?=:|=|;|\\s)((?:\\n|.)+?))(\\s?;)", 'i');
+        indent = INDENT(indent);
+        return new RegExp("" + indent + "((?:public|private)?\\s?(" + name + ")(?=:|=|;|\\s)((?:\\n|.)+?))(\\s?;)", 'i');
       },
       INTERFACE_DEF: function(name) {
         if (name == null) {
@@ -73,18 +77,18 @@
     }
     source = source.replace(regexps.CLASS(), function(match, name, body) {
       var class_def;
-      log("Found class '" + name);
+      log("Found class '" + name + "'");
       def = regexps.CLASS(name).exec(definition);
       if (!def) {
         return match;
       }
-      log("Found definition for class '" + name);
+      log("Found definition for class '" + name + "'");
       class_def = def[0];
-      match = match.replace(regexps.METHOD(), function(match, indent, signature, name) {
+      match = match.replace(regexps.METHOD(2), function(match, indent, signature, name) {
         var defs, ret, _i, _len, _ref1;
         log("Found method '" + name + "'");
         defs = [];
-        regexp = regexps.METHOD_DEF(name);
+        regexp = regexps.METHOD_DEF(1, name);
         while (def = regexp.exec(class_def)) {
           defs.push(def);
         }
@@ -100,9 +104,9 @@
         }
         return "" + ret + indent + (defs.last()[1]) + " {";
       });
-      return match = match.replace(regexps.ATTRIBUTE(), function(match, indent, signature, name, space, suffix) {
+      return match = match.replace(regexps.ATTRIBUTE(2), function(match, indent, signature, name, space, suffix) {
         log("Found attribute '" + name + "'");
-        def = regexps.ATTRIBUTE_DEF(name).exec(class_def);
+        def = regexps.ATTRIBUTE_DEF(1, name).exec(class_def);
         if (!def) {
           return match;
         }

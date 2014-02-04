@@ -1,0 +1,9 @@
+{
+	"name": "CompiledCoffee Promises example",
+	"dependencies": {
+		"es6-promise": "latest"
+	},
+	"devDependencies": {
+		"compiled-coffee": "latest"
+	}
+}
