@@ -55,6 +55,12 @@ example-simple:
 		-o examples/simple/build \
 		--watch
 	
+example-generics:
+	./bin/ccoffee \
+		-i examples/generics/src \
+		-o examples/generics/build \
+		--watch
+	
 example-promises:
 	./bin/ccoffee \
 		-i examples/promises/src \

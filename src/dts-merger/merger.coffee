@@ -9,7 +9,8 @@ constructor: (@string_attr, @number_attr) ->
 fs = require 'fs'
 require 'sugar'
 
-global.log ?= ->
+#global.log ?= ->
+global.log ?= console.log
 
 mergeFile = (name) ->
 	# check definitinon file
@@ -29,7 +30,7 @@ mergeFile = (name) ->
 RegExpQuote = (str) ->
     (str+'').replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
 
-merge = (source, definition) ->
+merge = (source, headers) ->
 	
 	INDENT = (tabs) ->
 		"(?:^|\\n)(?:\\s{#{tabs*2}}|\\t{#{tabs}})"
@@ -37,7 +38,7 @@ merge = (source, definition) ->
 	regexps =
 		CLASS: (name) ->
 			name ?= '[\\w$]+'
-			new RegExp "class\\s(#{name})((?:\\n|.)+?)(?:\\n\\})", 'ig'
+			new RegExp "class\\s+(#{name})([$<>\\s\\w]+?)\\{((?:\\n|.)+?)(?:\\n\\})", 'ig'
 		METHOD: (indent, name) ->
 			name ?= '[\\w$]+'
 			indent = INDENT indent
@@ -52,7 +53,7 @@ merge = (source, definition) ->
 			name = RegExpQuote name
 			indent = INDENT indent
 			new RegExp(
-					"#{indent}((?:public|private)?\\s?(#{name})(?=\\()(?:\\n|.)+?)(\\s?;)", 'ig')
+					"#{indent}((?:public|private)?\\s?(#{name})(?=\\()(\\n|.)+?)(\\s?;)", 'ig')
 		ATTRIBUTE_DEF: (indent, name) ->
 			name = RegExpQuote name
 			indent = INDENT indent
@@ -63,44 +64,50 @@ merge = (source, definition) ->
 			new RegExp "(^|\\n)(export\\s+)?interface\\s(#{name})(?=\\s|\\{)((?:\\n|.)+?)(?:\\n\\})", 'ig'
 			
 	regexp = regexps.INTERFACE_DEF()
-	while def = regexp.exec definition
+	while def = regexp.exec headers
 		source += def[0]
 
 	# for each class in the source
-	source = source.replace regexps.CLASS(), (match, name, body) ->
+	source = source.replace regexps.CLASS(), (match, name, extension, body) ->
 		log "Found class '#{name}'"
 
 		# match a corresponding class in the definiton file
-		def = regexps.CLASS(name).exec definition
-		return match if not def
+		class_def = regexps.CLASS(name).exec headers
+		return match if not class_def
 		log "Found definition for class '#{name}'"
-		class_def = def[0]
+		
+		# copty the class signature (interfaces, generics)
+		ret = "class #{class_def[1]}#{class_def[2]}#{extension}{#{body}\n}"
 
 		# for each method in the source class
-		match = match.replace regexps.METHOD(2), (match, indent, signature, name) ->
+		ret = ret.replace regexps.METHOD(2), (match, indent, signature, name) ->
 			log "Found method '#{name}'"
 			# match a corresponding method in the class'es definiton
 			defs = []
 			regexp = regexps.METHOD_DEF 1, name
-			while def = regexp.exec class_def
+			while def = regexp.exec class_def[3]
 				defs.push def
 			return match if not defs.length
 			log "Found #{defs.length} definition(s) for the method '#{name}'"
 			ret = ''
 			for def in defs[0...-1]
-				ret += "#{indent}#{def[1]};"
+				ret += "#{indent}#{def[1]}#{def[2]};"
+				
 			"#{ret}#{indent}#{defs.last()[1]} {"
 
 		# for each attribute in the source class
-		match = match.replace(regexps.ATTRIBUTE(2),
+		ret = ret.replace(regexps.ATTRIBUTE(2),
 			(match, indent, signature, name, space, suffix) ->
 				log "Found attribute '#{name}'"
 				# match a corresponding method in the class'es definiton
-				def = regexps.ATTRIBUTE_DEF(1, name).exec class_def
+				def = regexps.ATTRIBUTE_DEF(1, name).exec class_def[3]
 				return match if not def
 				log "Found definition for method '#{name}'"
+				
 				"#{indent}#{def[1]} #{suffix}"
 		)
+		
+		ret
 
 	# TODO use body instead of match
 

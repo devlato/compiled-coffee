@@ -9,7 +9,7 @@
   require('sugar');
 
   if ((_ref = global.log) == null) {
-    global.log = function() {};
+    global.log = console.log;
   }
 
   mergeFile = function(name) {
@@ -28,7 +28,7 @@
     return (str + '').replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
   };
 
-  merge = function(source, definition) {
+  merge = function(source, headers) {
     var INDENT, def, regexp, regexps;
     INDENT = function(tabs) {
       return "(?:^|\\n)(?:\\s{" + (tabs * 2) + "}|\\t{" + tabs + "})";
@@ -38,7 +38,7 @@
         if (name == null) {
           name = '[\\w$]+';
         }
-        return new RegExp("class\\s(" + name + ")((?:\\n|.)+?)(?:\\n\\})", 'ig');
+        return new RegExp("class\\s+(" + name + ")([$<>\\s\\w]+?)\\{((?:\\n|.)+?)(?:\\n\\})", 'ig');
       },
       METHOD: function(indent, name) {
         if (name == null) {
@@ -57,7 +57,7 @@
       METHOD_DEF: function(indent, name) {
         name = RegExpQuote(name);
         indent = INDENT(indent);
-        return new RegExp("" + indent + "((?:public|private)?\\s?(" + name + ")(?=\\()(?:\\n|.)+?)(\\s?;)", 'ig');
+        return new RegExp("" + indent + "((?:public|private)?\\s?(" + name + ")(?=\\()(\\n|.)+?)(\\s?;)", 'ig');
       },
       ATTRIBUTE_DEF: function(indent, name) {
         name = RegExpQuote(name);
@@ -72,24 +72,24 @@
       }
     };
     regexp = regexps.INTERFACE_DEF();
-    while (def = regexp.exec(definition)) {
+    while (def = regexp.exec(headers)) {
       source += def[0];
     }
-    source = source.replace(regexps.CLASS(), function(match, name, body) {
-      var class_def;
+    source = source.replace(regexps.CLASS(), function(match, name, extension, body) {
+      var class_def, ret;
       log("Found class '" + name + "'");
-      def = regexps.CLASS(name).exec(definition);
-      if (!def) {
+      class_def = regexps.CLASS(name).exec(headers);
+      if (!class_def) {
         return match;
       }
       log("Found definition for class '" + name + "'");
-      class_def = def[0];
-      match = match.replace(regexps.METHOD(2), function(match, indent, signature, name) {
-        var defs, ret, _i, _len, _ref1;
+      ret = "class " + class_def[1] + class_def[2] + extension + "{" + body + "\n}";
+      ret = ret.replace(regexps.METHOD(2), function(match, indent, signature, name) {
+        var defs, _i, _len, _ref1;
         log("Found method '" + name + "'");
         defs = [];
         regexp = regexps.METHOD_DEF(1, name);
-        while (def = regexp.exec(class_def)) {
+        while (def = regexp.exec(class_def[3])) {
           defs.push(def);
         }
         if (!defs.length) {
@@ -100,19 +100,20 @@
         _ref1 = defs.slice(0, -1);
         for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
           def = _ref1[_i];
-          ret += "" + indent + def[1] + ";";
+          ret += "" + indent + def[1] + def[2] + ";";
         }
         return "" + ret + indent + (defs.last()[1]) + " {";
       });
-      return match = match.replace(regexps.ATTRIBUTE(2), function(match, indent, signature, name, space, suffix) {
+      ret = ret.replace(regexps.ATTRIBUTE(2), function(match, indent, signature, name, space, suffix) {
         log("Found attribute '" + name + "'");
-        def = regexps.ATTRIBUTE_DEF(1, name).exec(class_def);
+        def = regexps.ATTRIBUTE_DEF(1, name).exec(class_def[3]);
         if (!def) {
           return match;
         }
         log("Found definition for method '" + name + "'");
         return "" + indent + def[1] + " " + suffix;
       });
+      return ret;
     });
     return source;
   };
