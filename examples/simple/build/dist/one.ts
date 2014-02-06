@@ -1,11 +1,11 @@
-export class One {
-    string_attr: string = "abc";
+export class One  {
+    	string_attr: string = "abc";
 
     number_attr: number = null;
 
     private priv_attr: any = null;
 
-    constructor(string_attr: string, number_attr: number) {
+    	constructor(string_attr: string, number_attr: number) {
         this.string_attr = string_attr;
         this.number_attr = number_attr;
         this.method();
@@ -16,8 +16,8 @@ export class One {
     }
 }
 
-export class Two extends One {
-    method(str?: string): string {
+export class Two  extends One {
+    	method(str?: string): string {
         return this.string_attr + str + this.number_attr;
     }
 }

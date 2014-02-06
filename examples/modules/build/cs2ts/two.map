@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "two.ts",
+  "sourceRoot": "../../src",
+  "sources": [
+    "two.coffee"
+  ],
+  "names": [],
+  "mappings": ";CAMsB,EAAD,MAAH"
+}

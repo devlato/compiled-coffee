@@ -7,3 +7,5 @@
 
 # ALL
 - dont pollute global namespace!
+- resurect tests
+- rewrite to compiled-coffee

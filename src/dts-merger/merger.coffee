@@ -76,7 +76,7 @@ merge = (source, headers) ->
 		return match if not class_def
 		log "Found definition for class '#{name}'"
 		
-		# copty the class signature (interfaces, generics)
+		# copy the class signature (interfaces, generics)
 		ret = "class #{class_def[1]}#{class_def[2]}#{extension}{#{body}\n}"
 
 		# for each method in the source class

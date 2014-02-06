@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "external-import.ts",
+  "sourceRoot": "../../src",
+  "sources": [
+    "external-import.coffee"
+  ],
+  "names": [],
+  "mappings": ";;;CAOC,CAAU"
+}

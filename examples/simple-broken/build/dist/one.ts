@@ -1,26 +1,26 @@
 /// <reference path="../../../../d.ts/console.d.ts"/>
 "See /examples/simple for the correct version.";
 
-export class One {
-    string_attr: string = "abc";
+export class One  {
+    	string_attr: string = "abc";
 
     number_attr: number = null;
 
     private priv_attr: any = null;
 
-    constructor(string_attr: string, number_attr: number) {
+    	constructor(string_attr: string, number_attr: number) {
         this.string_attr = number_attr;
         this.number_attr = string_attr;
         this.method2();
     }
 
-    	method(): string {
+    method(): string {
         return this.string_attr / this.number_attr;
     }
 }
 
-export class Two extends One {
-    method(str: string): string {
+export class Two  extends One {
+    	method(str: string): string {
         return this.string_attr * str + this.number_attr;
     }
 }

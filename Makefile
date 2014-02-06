@@ -57,6 +57,12 @@ example-simple:
 		-o examples/simple/build \
 		--watch
 	
+example-modules:
+	./bin/ccoffee \
+		-i examples/modules/src \
+		-o examples/modules/build \
+		--watch
+	
 example-callbacks:
 	./bin/ccoffee \
 		-i examples/callbacks/src \

@@ -157,7 +157,7 @@ class Builder extends EventEmitter
 		ts_file = file.replace @coffee_suffix, '.ts'
 		# no definition file, copy the transpiled source directly
 		exists = yield fs.exists @source_dir + @sep + dts_file, suspend.resumeRaw()
-		if not exists
+		if not exists[0]
 			yield fs.readFile ([@output_dir, 'cs2ts', ts_file].join @sep), 
 				{encoding: 'utf8'}, go()
 		# read both the source and the definition, then merge and write
@@ -195,7 +195,7 @@ class Builder extends EventEmitter
 			node = @source_dir + @sep + file
 			# TODO watch parent dirs for non yet existing d.ts files
 			exists = yield fs.exists node, suspend.resumeRaw()
-			continue if not exists
+			continue if not exists[0]
 			fs.watchFile node, persistent: yes, interval: 500, => 
 				@reload yes, ->
 		yield @reload no, go()

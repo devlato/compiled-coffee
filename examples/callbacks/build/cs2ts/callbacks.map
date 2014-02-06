@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "callbacks.ts",
+  "sourceRoot": "../../src",
+  "sources": [
+    "callbacks.coffee"
+  ],
+  "names": [],
+  "mappings": ";;;CAIiB,CAAO,GAAR,GAAA,GAAb;CACY,CAA6B,CAAR,CAAjB,CAAS,GAAT,EAAf,KAAA;KADY;;;;CAIF,IAAD,GAAA,GAAV;CACS,EAAR,EAAA,EAAO,QAAP;KADS;;;CAGK,CAAmB,eAApB"
+}

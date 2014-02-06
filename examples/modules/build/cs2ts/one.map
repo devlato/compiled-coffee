@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "one.ts",
+  "sourceRoot": "../../src",
+  "sources": [
+    "one.coffee"
+  ],
+  "names": [],
+  "mappings": ";CACO,EAAA,CAAL"
+}

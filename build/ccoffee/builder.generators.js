@@ -210,7 +210,7 @@
       dts_file = file.replace(this.coffee_suffix, '.d.ts');
       ts_file = file.replace(this.coffee_suffix, '.ts');
       exists = yield fs.exists(this.source_dir + this.sep + dts_file, suspend.resumeRaw());
-      if (!exists) {
+      if (!exists[0]) {
         return yield fs.readFile([this.output_dir, 'cs2ts', ts_file].join(this.sep), {
           encoding: 'utf8'
         }, go());
@@ -276,7 +276,7 @@
         file = _ref1[_j];
         node = this.source_dir + this.sep + file;
         exists = yield fs.exists(node, suspend.resumeRaw());
-        if (!exists) {
+        if (!exists[0]) {
           continue;
         }
         fs.watchFile(node, {
