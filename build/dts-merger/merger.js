@@ -9,7 +9,7 @@
   require('sugar');
 
   if ((_ref = global.log) == null) {
-    global.log = console.log;
+    global.log = function() {};
   }
 
   mergeFile = function(name) {
@@ -45,24 +45,24 @@
           name = '[\\w$]+';
         }
         indent = INDENT(indent);
-        return new RegExp("(" + indent + ")((?:(?:public|private)\\s)?(" + name + ")(?=\\()((?:\\n|[^=])+?))(?:\\s?\\{)", 'ig');
+        return new RegExp("(" + indent + ")((?:(?:public|private)\\s)?((?:static\\s+)?" + name + ")(?=\\()((?:\\n|[^=])+?))(?:\\s?\\{)", 'ig');
       },
       ATTRIBUTE: function(indent, name) {
         if (name == null) {
           name = '[\\w$]+';
         }
         indent = INDENT(indent);
-        return new RegExp("(" + indent + ")((?:(?:public|private)\\s)?(" + name + ")(?=:|=|;|\\s)((?:\\n|[^(])+?))(?:\\s?(=|;))", 'ig');
+        return new RegExp("(" + indent + ")((?:(?:public|private)\\s)?((?:static\\s+)?" + name + ")(?=:|=|;|\\s)((?:\\n|[^(])+?))(?:\\s?(=|;))", 'ig');
       },
       METHOD_DEF: function(indent, name) {
         name = RegExpQuote(name);
         indent = INDENT(indent);
-        return new RegExp("" + indent + "((?:public|private)?\\s?(" + name + ")(?=\\()(\\n|.)+?)(\\s?;)", 'ig');
+        return new RegExp("" + indent + "((?:public|private)?\\s?((?:static\\s+)?" + name + ")(?=\\()(\\n|.)+?)(\\s?;)", 'ig');
       },
       ATTRIBUTE_DEF: function(indent, name) {
         name = RegExpQuote(name);
         indent = INDENT(indent);
-        return new RegExp("" + indent + "((?:public|private)?\\s?(" + name + ")(?=:|=|;|\\s)((?:\\n|.)+?))(\\s?;)", 'i');
+        return new RegExp("" + indent + "((?:public|private)?\\s?((?:static\\s+)?" + name + ")(?=:|=|;|\\s)((?:\\n|.)+?))(\\s?;)", 'i');
       },
       INTERFACE_DEF: function(name) {
         if (name == null) {

@@ -9,8 +9,8 @@ constructor: (@string_attr, @number_attr) ->
 fs = require 'fs'
 require 'sugar'
 
-#global.log ?= ->
-global.log ?= console.log
+global.log ?= ->
+#global.log ?= console.log
 
 mergeFile = (name) ->
 	# check definitinon file
@@ -43,22 +43,22 @@ merge = (source, headers) ->
 			name ?= '[\\w$]+'
 			indent = INDENT indent
 			new RegExp(
-					"(#{indent})((?:(?:public|private)\\s)?(#{name})(?=\\()((?:\\n|[^=])+?))(?:\\s?\\{)", 'ig')
+					"(#{indent})((?:(?:public|private)\\s)?((?:static\\s+)?#{name})(?=\\()((?:\\n|[^=])+?))(?:\\s?\\{)", 'ig')
 		ATTRIBUTE: (indent, name) ->
 			name ?= '[\\w$]+'
 			indent = INDENT indent
 			new RegExp(
-					"(#{indent})((?:(?:public|private)\\s)?(#{name})(?=:|=|;|\\s)((?:\\n|[^(])+?))(?:\\s?(=|;))", 'ig')
+					"(#{indent})((?:(?:public|private)\\s)?((?:static\\s+)?#{name})(?=:|=|;|\\s)((?:\\n|[^(])+?))(?:\\s?(=|;))", 'ig')
 		METHOD_DEF: (indent, name) ->
 			name = RegExpQuote name
 			indent = INDENT indent
 			new RegExp(
-					"#{indent}((?:public|private)?\\s?(#{name})(?=\\()(\\n|.)+?)(\\s?;)", 'ig')
+					"#{indent}((?:public|private)?\\s?((?:static\\s+)?#{name})(?=\\()(\\n|.)+?)(\\s?;)", 'ig')
 		ATTRIBUTE_DEF: (indent, name) ->
 			name = RegExpQuote name
 			indent = INDENT indent
 			new RegExp(
-					"#{indent}((?:public|private)?\\s?(#{name})(?=:|=|;|\\s)((?:\\n|.)+?))(\\s?;)", 'i')
+					"#{indent}((?:public|private)?\\s?((?:static\\s+)?#{name})(?=:|=|;|\\s)((?:\\n|.)+?))(\\s?;)", 'i')
 		INTERFACE_DEF: (name) ->
 			name ?= '[\\w$]+'
 			new RegExp "(^|\\n)(export\\s+)?interface\\s(#{name})(?=\\s|\\{)((?:\\n|.)+?)(?:\\n\\})", 'ig'

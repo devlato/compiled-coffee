@@ -34,13 +34,14 @@ class Builder extends EventEmitter
 		
 	prepareDirs: suspend.async ->
 		return if @build_dirs_created
-		dirs = ['cs2ts', 'dist']
-		dirs.push 'dist-pkg' if @pack
-		yield async.each dirs, (suspend.async (dir) =>
-				dir_path = @output_dir + @sep + dir
-				exists = yield fs.exists dir_path, suspend.resumeRaw()
+		dirs = [@output_dir
+      @output_dir + @sep + 'cs2ts'
+      @output_dir + @sep + 'dist']
+		dirs.push @output_dir + @sep + 'dist-pkg' if @pack
+		yield async.eachSeries dirs, (suspend.async (dir) =>
+				exists = yield fs.exists dir, suspend.resumeRaw()
 				if not exists[0]
-					yield fs.mkdir dir_path, go()
+					yield fs.mkdir dir, go()
 #					try yield fs.mkdir path, go()
 #					catch e
 #						throw e if e.type isnt 'EEXIST'

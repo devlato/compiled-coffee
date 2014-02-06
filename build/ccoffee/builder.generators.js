@@ -56,16 +56,15 @@
       if (this.build_dirs_created) {
         return;
       }
-      dirs = ['cs2ts', 'dist'];
+      dirs = [this.output_dir, this.output_dir + this.sep + 'cs2ts', this.output_dir + this.sep + 'dist'];
       if (this.pack) {
-        dirs.push('dist-pkg');
+        dirs.push(this.output_dir + this.sep + 'dist-pkg');
       }
-      yield async.each(dirs, suspend.async(function*(dir) {
-        var dir_path, exists;
-        dir_path = _this.output_dir + _this.sep + dir;
-        exists = yield fs.exists(dir_path, suspend.resumeRaw());
+      yield async.eachSeries(dirs, suspend.async(function*(dir) {
+        var exists;
+        exists = yield fs.exists(dir, suspend.resumeRaw());
         if (!exists[0]) {
-          return yield fs.mkdir(dir_path, go());
+          return yield fs.mkdir(dir, go());
         }
       }), go());
       return this.build_dirs_created = true;

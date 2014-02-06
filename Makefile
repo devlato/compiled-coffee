@@ -5,7 +5,6 @@ MOCHA=./node_modules/mocha/bin/mocha
 
 build:
 	$(CS_GENERATORS) \
-		--watch -c \
 		-o build \
 		src
 
@@ -17,7 +16,10 @@ build-example:
 		-p one.js:one
 
 build-watch:
-	node --harmony ../typed-coffeescript/src/coffeetype.js -o build2 -i src2 --watch
+	$(CS_GENERATORS) \
+		--watch -c \
+		-o build \
+		src
 
 test:
 	#rm test/build/*/**
@@ -53,6 +55,12 @@ example-simple:
 	./bin/ccoffee \
 		-i examples/simple/src \
 		-o examples/simple/build \
+		--watch
+	
+example-callbacks:
+	./bin/ccoffee \
+		-i examples/callbacks/src \
+		-o examples/callbacks/build \
 		--watch
 	
 example-generics:
