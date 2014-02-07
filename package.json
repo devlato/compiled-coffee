@@ -8,7 +8,7 @@
 	"directories": {"bin": "bin/"},
 	"scripts": {"test": "make test"},
 	"dependencies": {
-		"coffee-script-to-typescript": "TobiaszCudnik/coffeescript-to-typescript@dcb063a783626d445272822e140ee50458ec8b56",
+		"coffee-script-to-typescript": "TobiaszCudnik/coffeescript-to-typescript@almost-master",
 		"typescript": "latest",
 		"commander": "latest",
 		"suspend": "latest",

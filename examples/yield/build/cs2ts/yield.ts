@@ -9,6 +9,8 @@ export var resume = suspend.resume;
 export class One {
     numeric_attr = null;
 
+    string_attr = null;
+
     test(foo) {
         return this.numeric_attr = yield(this.callback(foo, resume()));
     }

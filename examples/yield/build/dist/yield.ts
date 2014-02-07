@@ -7,13 +7,15 @@ export var wrapAsync = suspend.async;
 export var resume = suspend.resume;
 
 export class One  {
-    numeric_attr = null;
+    numeric_attr: number = null;
 
-    test(foo) {
+    string_attr: string = null;
+
+    test(foo: string, next: suspend.IResume<void>) {
         return this.numeric_attr = yield(this.callback(foo, resume()));
     }
 
-    callback(foo, next) {
+    callback(foo: string, next: suspend.IResume<number>): number {
         return setTimeout((() => next(null, 10)), 0);
     }
 }

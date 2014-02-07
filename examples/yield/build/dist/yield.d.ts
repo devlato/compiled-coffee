@@ -5,6 +5,7 @@ export declare var wrapAsync: typeof suspend.async;
 export declare var resume: typeof suspend.resume;
 export declare class One {
     public numeric_attr: number;
+    public string_attr: string;
     public test(foo: string, next: suspend.IResume<void>): number;
     public callback(foo: string, next: suspend.IResume<number>): number;
 }

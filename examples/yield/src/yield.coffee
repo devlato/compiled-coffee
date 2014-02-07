@@ -9,6 +9,7 @@ resume = suspend.resume
 
 class One
 	numeric_attr: null
+	string_attr: null
 
 	test: (foo) ->
 		@numeric_attr = yield @callback foo, resume()

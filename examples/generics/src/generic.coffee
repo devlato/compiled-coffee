@@ -1,9 +1,8 @@
 class GenericExample
-	greeting: null;
+	greeting: null
 	constructor: (message) ->
-		@greeting = message;
-	greet: ->
-		return @greeting;
+		@greeting = message
+	greet: -> @greeting
 
 		
 class GenericTest
