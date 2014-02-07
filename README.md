@@ -6,6 +6,9 @@ with TypeScript's type system via the definition files. You create a *.coffee
 file and a *.d.ts file with the same name, in which you (optionally) type 
 stuff. Rest is handled automatically.
 
+[See it in action](http://www.youtube.com/watch?v=aj4V8TVbjP0) in a <5min 
+screencast.
+
 # Features
 
 - merges CoffeeScript classes with types from d.ts files
