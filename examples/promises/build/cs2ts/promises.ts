@@ -16,26 +16,11 @@ export class PromiseExample {
         this.number = number;
     }
 
-    stringPromise(string) {
-        return new Promise((resolve) => setTimeout((function() {
-                return resolve(this.string + string);
-            }), 0));
+    createPromise(number) {
+        return new Promise(this.promiseResolver.bind(this, number));
     }
 
-    numberPromise(string) {
-        return new Promise((resolve) => {
-            var converted = parseInt(string);
-            return setTimeout((function() {
-                return resolve(this.number + converted);
-            }), 0);
-        });
-    }
-
-    objectPromise(number) {
-        return new Promise(this.objectPromiseResolver.bind(this, number));
-    }
-
-    objectPromiseResolver(number, resolve) {
+    promiseResolver(number, resolve) {
         return setTimeout((() => resolve(new TestClass(number))), 0);
     }
 
@@ -53,7 +38,7 @@ export class TestClass {
 }
 
 export var example = new PromiseExample("15", 100);
-example.stringPromise("0").then(example.numberPromise).then(example.objectPromise).then(example.printResult);
+(example.createPromise(100)).then(example.printResult);
 
 /*
 //@ sourceMappingURL=promises.map

@@ -1,9 +1,9 @@
 {
   "version": 3,
-  "file": "one.ts",
+  "file": "simple.ts",
   "sourceRoot": "../../src",
   "sources": [
-    "one.coffee"
+    "simple.coffee"
   ],
   "names": [],
   "mappings": ";GACc,CAAb;;GACa,CAAb;;GACW,CAAX;;CAEc,CAAa,EAA3B;CACC,EAAe,CAAd,IAAD,GAAA;CAAA,EACe,CAAd,IAAD,GAAA;CADA,GAEC,EAAD,EAAA;;;CAEO,GAAR,EAAQ;CAAI,EAAc,CAAd,OAAD,IAAA;KAAH;;;SAES;CACR,EAAD,CAAR,EAAQ;CAAU,EAAc,CAAd,OAAD,IAAA;KAAT;;;CAEK,CAAO,CAAX,CAAA,CAAA;CACI,CAAO,CAAX,CAAA,CAAA;;CAEN,CAAwB,CAAzB;CACF,CAAiC,CAA9B,EAAH,CAAA"

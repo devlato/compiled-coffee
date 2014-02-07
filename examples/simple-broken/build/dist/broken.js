@@ -40,4 +40,4 @@ exports.two = new Two("foo", 123);
 exports.one.method().replace(/foo/, /bar/);
 console.log(exports.one.priv_attr);
 (exports.two.method("bar")).replace(/bar/, "foo");
-//# sourceMappingURL=one.js.map
+//# sourceMappingURL=broken.js.map

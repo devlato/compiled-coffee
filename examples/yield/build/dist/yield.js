@@ -10,8 +10,8 @@ var One = (function () {
     function One() {
         this.numeric_attr = null;
     }
-    One.prototype.test = function* (foo, next) {
-        return this.numeric_attr = yield this.callback(foo, exports.resume());
+    One.prototype.test = function (foo) {
+        return this.numeric_attr = yield(this.callback(foo, exports.resume()));
     };
 
     One.prototype.callback = function (foo, next) {
@@ -25,9 +25,9 @@ exports.One = One;
 One.prototype.callback = exports.wrapAsync(One.prototype.callback);
 One.prototype.test = exports.wrapAsync(One.prototype.test);
 
-suspend.run(function* () {
+suspend.run(function () {
     var one = new One;
-    yield one.test("foo", exports.resume());
+    yield(one.test("foo", exports.resume()));
     return console.log(one.numeric_attr);
 });
-//# sourceMappingURL=one.js.map
+//# sourceMappingURL=yield.js.map

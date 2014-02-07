@@ -7,10 +7,8 @@ export declare class PromiseExample {
     public number: number;
     public object: any;
     constructor(string: string, number: number);
-    public stringPromise(string: string): es6_promise.Promise<string>;
-    public numberPromise(string: string): es6_promise.Promise<number>;
-    public objectPromise(number: number): es6_promise.Promise<TestClass>;
-    public objectPromiseResolver(number: number, resolve: (result: TestClass) => void): void;
+    public createPromise(number: number): es6_promise.Promise<TestClass>;
+    public promiseResolver(number: number, resolve: (result: TestClass) => void): void;
     public printResult(object: TestClass): void;
 }
 export declare class TestClass {

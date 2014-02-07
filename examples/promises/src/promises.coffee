@@ -14,20 +14,11 @@ class PromiseExample
 		@string = string
 		@number = number
 		
-	stringPromise: (string) ->
-		new Promise (resolve) =>
-			setTimeout (-> resolve @string + string), 0
-		
-	numberPromise: (string) ->
-		new Promise (resolve) =>
-			converted = parseInt string
-			setTimeout (-> resolve @number + converted), 0
-		
-	objectPromise: (number) ->
-		new Promise @objectPromiseResolver.bind @, number
+	createPromise: (number) ->
+		new Promise @promiseResolver.bind @, number
 			
 	# This is needed if we want to have a fully typed resolver
-	objectPromiseResolver: (number, resolve) ->
+	promiseResolver: (number, resolve) ->
 		setTimeout (-> resolve new TestClass number), 0
 			
 	printResult: (object) ->
@@ -40,7 +31,5 @@ class TestClass
 		@result = number * 2
 		
 example = new PromiseExample '15', 100
-example.stringPromise('0')
-	.then(example.numberPromise)
-	.then(example.objectPromise)
+(example.createPromise 100)
 	.then(example.printResult);

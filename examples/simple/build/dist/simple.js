@@ -37,4 +37,4 @@ exports.two = new Two("foo", 123);
 
 exports.one.method().replace(/foo/, "bar");
 (exports.two.method("bar")).replace(/bar/, "foo");
-//# sourceMappingURL=one.js.map
+//# sourceMappingURL=simple.js.map

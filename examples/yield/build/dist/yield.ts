@@ -6,7 +6,7 @@ import suspend = require('suspend');
 export var wrapAsync = suspend.async;
 export var resume = suspend.resume;
 
-export class One {
+export class One  {
     numeric_attr = null;
 
     test(foo) {
@@ -27,5 +27,5 @@ suspend.run(() => {
 });
 
 /*
-//@ sourceMappingURL=one.map
+//@ sourceMappingURL=yield.map
 */

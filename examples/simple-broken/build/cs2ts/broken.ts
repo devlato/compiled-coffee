@@ -33,5 +33,5 @@ console.log(one.priv_attr);
 (two.method("bar")).replace(/bar/, "foo");
 
 /*
-//@ sourceMappingURL=one.map
+//@ sourceMappingURL=broken.map
 */

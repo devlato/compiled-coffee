@@ -12,28 +12,11 @@ var PromiseExample = (function () {
         this.string = string;
         this.number = number;
     }
-    PromiseExample.prototype.stringPromise = function (string) {
-        return new exports.Promise(function (resolve) {
-            return setTimeout((function () {
-                return resolve(this.string + string);
-            }), 0);
-        });
+    PromiseExample.prototype.createPromise = function (number) {
+        return new exports.Promise(this.promiseResolver.bind(this, number));
     };
 
-    PromiseExample.prototype.numberPromise = function (string) {
-        return new exports.Promise(function (resolve) {
-            var converted = parseInt(string);
-            return setTimeout((function () {
-                return resolve(this.number + converted);
-            }), 0);
-        });
-    };
-
-    PromiseExample.prototype.objectPromise = function (number) {
-        return new exports.Promise(this.objectPromiseResolver.bind(this, number));
-    };
-
-    PromiseExample.prototype.objectPromiseResolver = function (number, resolve) {
+    PromiseExample.prototype.promiseResolver = function (number, resolve) {
         return setTimeout((function () {
             return resolve(new TestClass(number));
         }), 0);
@@ -56,5 +39,5 @@ var TestClass = (function () {
 exports.TestClass = TestClass;
 
 exports.example = new PromiseExample("15", 100);
-exports.example.stringPromise("0").then(exports.example.numberPromise).then(exports.example.objectPromise).then(exports.example.printResult);
+(exports.example.createPromise(100)).then(exports.example.printResult);
 //# sourceMappingURL=promises.js.map

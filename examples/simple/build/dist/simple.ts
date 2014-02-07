@@ -1,23 +1,23 @@
-export class One {
-    string_attr = "abc";
+export class One  {
+    	string_attr: string = "abc";
 
-    number_attr = null;
+    number_attr: number = null;
 
-    priv_attr = null;
+    private priv_attr: any = null;
 
-    constructor(string_attr, number_attr) {
+    	constructor(string_attr: string, number_attr: number) {
         this.string_attr = string_attr;
         this.number_attr = number_attr;
         this.method();
     }
 
-    method() {
+    method(): string {
         return this.string_attr + this.number_attr;
     }
 }
 
-export class Two extends One {
-    method(str) {
+export class Two  extends One {
+    	method(str?: string): string {
         return this.string_attr + str + this.number_attr;
     }
 }
@@ -29,5 +29,5 @@ one.method().replace(/foo/, "bar");
 (two.method("bar")).replace(/bar/, "foo");
 
 /*
-//@ sourceMappingURL=one.map
+//@ sourceMappingURL=simple.map
 */

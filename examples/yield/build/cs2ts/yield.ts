@@ -7,13 +7,13 @@ export var wrapAsync = suspend.async;
 export var resume = suspend.resume;
 
 export class One {
-    numeric_attr: number = null;
+    numeric_attr = null;
 
-    test(foo: string, next: suspend.IResume<void>) {
+    test(foo) {
         return this.numeric_attr = yield(this.callback(foo, resume()));
     }
 
-    callback(foo: string, next: suspend.IResume<number>): number {
+    callback(foo, next) {
         return setTimeout((() => next(null, 10)), 0);
     }
 }
@@ -27,5 +27,5 @@ suspend.run(() => {
 });
 
 /*
-//@ sourceMappingURL=one.map
+//@ sourceMappingURL=yield.map
 */
