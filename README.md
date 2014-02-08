@@ -1,7 +1,7 @@
 # CompiledCoffee
 
 Do you like the type safety of TypeScript and the concise syntax of 
-CoffeeScript? In that case CompiledCoffee if for you! It combines CoffeeScript 
+CoffeeScript? In that case CompiledCoffee is for you! It combines CoffeeScript 
 with TypeScript's type system via the definition files. You create a *.coffee 
 file and a *.d.ts file with the same name, in which you (optionally) type 
 stuff. Rest is handled automatically.

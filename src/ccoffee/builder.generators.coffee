@@ -1,3 +1,7 @@
+"""
+TODO: "Error:" at the end
+"""
+
 suspend = require 'suspend'
 go = suspend.resume
 spawn = require('child_process').spawn
