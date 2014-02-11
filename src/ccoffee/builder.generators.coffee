@@ -12,6 +12,8 @@ ts_yield = require '../../node_modules/typescript-yield/build/ts-yield.js'
 fs = require 'fs'
 writestreamp = require 'writestreamp'
 mergeDefinition = require('../dts-merger/merger').merge
+coffee_script = require "../../node_modules/coffee-script-to-" +
+		"typescript/lib/coffee-script"
 #spawn_ = spawn
 #spawn = (args...) ->
 #	console.log 'Executing: ', args
@@ -27,20 +29,20 @@ class Builder extends EventEmitter
 	source_dir: null
 	output_dir: null
 	sep: path.sep
-	
+																
 	constructor: (@files, source_dir, output_dir, @pack = no, @yield = no) ->
 		super
-		
+																																
 		@output_dir = path.resolve output_dir
 		@source_dir = path.resolve source_dir
-		
+																																
 		@coffee_suffix = /\.coffee$/
-		
+																																
 	prepareDirs: suspend.async ->
 		return if @build_dirs_created
 		dirs = [@output_dir
-      @output_dir + @sep + 'cs2ts'
-      @output_dir + @sep + 'dist']
+			@output_dir + @sep + 'cs2ts'
+			@output_dir + @sep + 'dist']
 		dirs.push @output_dir + @sep + 'dist-pkg' if @pack
 		yield async.eachSeries dirs, (suspend.async (dir) =>
 				exists = yield fs.exists dir, suspend.resumeRaw()
@@ -55,16 +57,9 @@ class Builder extends EventEmitter
 	build: suspend.async ->
 		tick = ++@clock
 		error = no
-		
+																																
 		yield @prepareDirs go()
-		
-		# Coffee to TypeScript
-    try
-      require("#{__dirname}/../../node_modules/coffee-script-to-" +
-			  "typescript/bin/coffee").compile yield fs.readFile "#{__dirname}/../../node_modules/coffee-script-to-" +
-			  "typescript/bin/coffee", go()
-    catch e 
-		  throw new CoffeeScriptError if error
+																																
 #		@proc = spawn "#{__dirname}/../../node_modules/coffee-script-to-" +
 #			"typescript/bin/coffee",
 #			['-cm', '-o', "#{@output_dir}/cs2ts", @source_dir],
@@ -76,10 +71,9 @@ class Builder extends EventEmitter
 #			
 #		yield @proc.on 'exit', go()
 #		throw new CoffeeScriptError if error
-		return @emit 'aborted' if @clock isnt tick
-				
+																																																																
 		# Process definition merging and other source manipulation
-		yield async.map @files, (@processSource.bind @), go()
+		yield async.map @files, (@processSource.bind @, tick), go()
 		return @emit 'aborted' if @clock isnt tick
 
 		# Compile
@@ -99,12 +93,12 @@ class Builder extends EventEmitter
 			while ~err.indexOf remove
 				err = err.replace remove, ''
 			process.stdout.write err
-			
+																																																
 		try yield @proc.on 'close', go()
 		catch e
 			throw new TypeScriptError
 		return @emit 'aborted' if @clock isnt tick
-				
+																																																																
 		# Process definition merging and other source manipulation
 		yield async.map @files, (@processBuiltSource.bind @), go()
 		return @emit 'aborted' if @clock isnt tick
@@ -126,65 +120,72 @@ class Builder extends EventEmitter
 				while ~err.indexOf remove
 					err = err.replace remove, ''
 				process.stdout.write err
-				
+																																																																
 			yield @proc.on 'close', go()
 			return @emit 'aborted' if @clock isnt tick
-		
+																																
 		@proc = null
-		
+																																
 	tsFiles: -> 
 		files = (file.replace @coffee_suffix, '.ts' for file in @files)
-		
+																																
 	dtsFiles: -> 
 		files = (file.replace @coffee_suffix, '.d.ts' for file in @files)
-		
-	processSource: suspend.async (file) ->
-		source = yield @mergeDefinition file, go()
+																																
+	processSource: suspend.async (tick, file) ->
+		source = yield @readSourceFile file, go()
+		return @emit 'aborted' if @clock isnt tick
+		source = @processCoffee source
+		source = yield @mergeDefinition file, source, go()
 		yield @writeDistTsFile file, source, go()
-		
+																														    
+	processCoffee: (source) ->
+		# Coffee to TypeScript
+		try
+			coffee_script.compile source
+		catch e
+			throw new CoffeeScriptError if error
+																														    
+	readSourceFile: suspend.async (file) ->
+		yield fs.readFile ([@source_dir, file].join @sep), 
+			{encoding: 'utf8'}, go()
+																																
 	processBuiltSource: suspend.async (file) ->
 		js_file = file.replace @coffee_suffix, '.js'
 		source = yield fs.readFile ([@output_dir, 'dist', js_file].join @sep), 
 			{encoding: 'utf8'}, go()
 		source = @transpileYield source if @yield
 		yield @writeDistJsFile file, source, go()
-		
+																																
 	transpileYield: (source) ->
 		ts_yield.markGenerators ts_yield.unwrapYield source
-		
+																																
 	writeDistTsFile: suspend.async (file, source) ->
 		ts_file = file.replace @coffee_suffix, '.ts'
 		destination = writestreamp "#{@output_dir}/dist/#{ts_file}"
 		yield destination.end source, 'utf8', go()
-		
+																																
 	writeDistJsFile: suspend.async (file, source) ->
 		js_file = file.replace @coffee_suffix, '.js'
 		destination = writestreamp "#{@output_dir}/dist/#{js_file}"
 		yield destination.end source, 'utf8', go()
-		
-	mergeDefinition: suspend.async (file) ->
+																																
+	mergeDefinition: suspend.async (file, source) ->
 		dts_file = file.replace @coffee_suffix, '.d.ts'
-		ts_file = file.replace @coffee_suffix, '.ts'
 		# no definition file, copy the transpiled source directly
 		exists = yield fs.exists @source_dir + @sep + dts_file, suspend.resumeRaw()
-		if not exists[0]
-			yield fs.readFile ([@output_dir, 'cs2ts', ts_file].join @sep), 
-				{encoding: 'utf8'}, go()
-		# read both the source and the definition, then merge and write
-		else
-			fs.readFile ([@output_dir, 'cs2ts', ts_file].join @sep), encoding: 'utf8', 
-				suspend.fork()
-			fs.readFile @source_dir + @sep + dts_file, encoding: 'utf8', 
-				suspend.fork()
-			data = yield suspend.join()
-			mergeDefinition data[0], data[1]
+		if exists[0]
+			definition = yield fs.readFile @source_dir + @sep + dts_file, 
+					{encoding: 'utf8'}, go()
+			mergeDefinition source, definition
+		else source
 
 	close: ->
 		@proc?.kill()
-		
+																																
 	clean: ->
 		throw new Error 'not implemented'
-		
+																																
 	reload: suspend.async (refreshed) ->
 		console.log '-'.repeat 20 if refreshed
 		@proc?.kill()
@@ -195,7 +196,7 @@ class Builder extends EventEmitter
 				and e not instanceof CoffeeScriptError 
 			error = yes
 		console.log "Compilation completed" if not error
-		
+																																
 	watch: suspend.async -> 
 		for file in @files
 			node = @source_dir + @sep + file
@@ -215,7 +216,7 @@ module.exports = Builder
 class TypeScriptError extends Error
 	constructor: ->
 		super 'TypeScript compilation error'
-		
+																																
 class CoffeeScriptError extends Error
 	constructor: ->
 		super 'CoffeeScript compilation error'

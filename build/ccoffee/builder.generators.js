@@ -2,7 +2,7 @@
 (function() {
   "TODO: \"Error:\" at the end";
 
-  var Builder, CoffeeScriptError, EventEmitter, TypeScriptError, async, fs, go, mergeDefinition, path, spawn, suspend, ts_yield, writestreamp,
+  var Builder, CoffeeScriptError, EventEmitter, TypeScriptError, async, coffee_script, fs, go, mergeDefinition, path, spawn, suspend, ts_yield, writestreamp,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -21,6 +21,8 @@
   writestreamp = require('writestreamp');
 
   mergeDefinition = require('../dts-merger/merger').merge;
+
+  coffee_script = require("../../node_modules/coffee-script-to-" + "typescript/lib/coffee-script");
 
   path = require('path');
 
@@ -78,22 +80,7 @@
       tick = ++this.clock;
       error = false;
       yield this.prepareDirs(go());
-      this.proc = spawn(("" + __dirname + "/../../node_modules/coffee-script-to-") + "typescript/bin/coffee", ['-cm', '-o', "" + this.output_dir + "/cs2ts", this.source_dir], {
-        cwd: this.source_dir
-      });
-      this.proc.stderr.setEncoding('utf8');
-      this.proc.stderr.on('data', function(err) {
-        error = true;
-        return process.stdout.write(err);
-      });
-      yield this.proc.on('exit', go());
-      if (error) {
-        throw new CoffeeScriptError;
-      }
-      if (this.clock !== tick) {
-        return this.emit('aborted');
-      }
-      yield async.map(this.files, this.processSource.bind(this), go());
+      yield async.map(this.files, this.processSource.bind(this, tick), go());
       if (this.clock !== tick) {
         return this.emit('aborted');
       }
@@ -171,10 +158,31 @@
       }).call(this);
     };
 
-    Builder.prototype.processSource = suspend.async(function*(file) {
+    Builder.prototype.processSource = suspend.async(function*(tick, file) {
       var source;
-      source = yield this.mergeDefinition(file, go());
+      source = yield this.readSourceFile(file, go());
+      if (this.clock !== tick) {
+        return this.emit('aborted');
+      }
+      source = this.processCoffee(source);
+      source = yield this.mergeDefinition(file, source, go());
       return yield this.writeDistTsFile(file, source, go());
+    });
+
+    Builder.prototype.processCoffee = function(source) {
+      try {
+        return coffee_script.compile(source);
+      } catch (e) {
+        if (error) {
+          throw new CoffeeScriptError;
+        }
+      }
+    };
+
+    Builder.prototype.readSourceFile = suspend.async(function*(file) {
+      return yield fs.readFile([this.source_dir, file].join(this.sep), {
+        encoding: 'utf8'
+      }, go());
     });
 
     Builder.prototype.processBuiltSource = suspend.async(function*(file) {
@@ -207,24 +215,17 @@
       return yield destination.end(source, 'utf8', go());
     });
 
-    Builder.prototype.mergeDefinition = suspend.async(function*(file) {
-      var data, dts_file, exists, ts_file;
+    Builder.prototype.mergeDefinition = suspend.async(function*(file, source) {
+      var definition, dts_file, exists;
       dts_file = file.replace(this.coffee_suffix, '.d.ts');
-      ts_file = file.replace(this.coffee_suffix, '.ts');
       exists = yield fs.exists(this.source_dir + this.sep + dts_file, suspend.resumeRaw());
-      if (!exists[0]) {
-        return yield fs.readFile([this.output_dir, 'cs2ts', ts_file].join(this.sep), {
+      if (exists[0]) {
+        definition = yield fs.readFile(this.source_dir + this.sep + dts_file, {
           encoding: 'utf8'
         }, go());
+        return mergeDefinition(source, definition);
       } else {
-        fs.readFile([this.output_dir, 'cs2ts', ts_file].join(this.sep), {
-          encoding: 'utf8'
-        }, suspend.fork());
-        fs.readFile(this.source_dir + this.sep + dts_file, {
-          encoding: 'utf8'
-        }, suspend.fork());
-        data = yield suspend.join();
-        return mergeDefinition(data[0], data[1]);
+        return source;
       }
     });
 

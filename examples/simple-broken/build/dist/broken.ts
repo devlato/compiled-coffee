@@ -1,4 +1,3 @@
-/// <reference path="../../../../d.ts/console.d.ts"/>
 "See /examples/simple for the correct version.";
 
 export class One  {
@@ -31,7 +30,3 @@ export var two = new Two("foo", 123);
 one.method().replace(/foo/, /bar/);
 console.log(one.priv_attr);
 (two.method("bar")).replace(/bar/, "foo");
-
-/*
-//@ sourceMappingURL=broken.map
-*/
