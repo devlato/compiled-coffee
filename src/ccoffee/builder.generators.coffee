@@ -40,10 +40,8 @@ class Builder extends EventEmitter
 																																
 	prepareDirs: suspend.async ->
 		return if @build_dirs_created
-		dirs = [@output_dir
-			@output_dir + @sep + 'cs2ts'
-			@output_dir + @sep + 'dist']
-		dirs.push @output_dir + @sep + 'dist-pkg' if @pack
+		dirs = [@output_dir]
+		dirs.push @output_dir + @sep + 'dist' if @pack
 		yield async.eachSeries dirs, (suspend.async (dir) =>
 				exists = yield fs.exists dir, suspend.resumeRaw()
 				if not exists[0]
@@ -59,18 +57,7 @@ class Builder extends EventEmitter
 		error = no
 																																
 		yield @prepareDirs go()
-																																
-#		@proc = spawn "#{__dirname}/../../node_modules/coffee-script-to-" +
-#			"typescript/bin/coffee",
-#			['-cm', '-o', "#{@output_dir}/cs2ts", @source_dir],
-#			cwd: @source_dir
-#		@proc.stderr.setEncoding 'utf8'
-#		@proc.stderr.on 'data', (err) ->
-#			error = yes
-#			process.stdout.write err
-#			
-#		yield @proc.on 'exit', go()
-#		throw new CoffeeScriptError if error
+		return @emit 'aborted' if @clock isnt tick
 																																																																
 		# Process definition merging and other source manipulation
 		yield async.map @files, (@processSource.bind @, tick), go()
@@ -85,11 +72,11 @@ class Builder extends EventEmitter
 				"--sourcemap", 
 				"--noLib"]
 					.include(@tsFiles()),
-			cwd: "#{@output_dir}/dist/"
+			cwd: "#{@output_dir}/"
 		@proc.stderr.setEncoding 'utf8'
 		@proc.stderr.on 'data', (err) =>
 			# filter out the file path
-			remove = "#{@output_dir}#{@sep}dist"
+			remove = "#{@output_dir}#{@sep}"
 			while ~err.indexOf remove
 				err = err.replace remove, ''
 			process.stdout.write err
@@ -100,7 +87,7 @@ class Builder extends EventEmitter
 		return @emit 'aborted' if @clock isnt tick
 																																																																
 		# Process definition merging and other source manipulation
-		yield async.map @files, (@processBuiltSource.bind @), go()
+		yield async.map @files, (@processBuiltSource.bind @, tick), go()
 		return @emit 'aborted' if @clock isnt tick
 
 		if @pack
@@ -110,13 +97,13 @@ class Builder extends EventEmitter
 					"-r", "./#{@pack}", 
 					"--no-builtins",
 					"--insert-globals",
-					"-o", "#{@output_dir}/dist-pkg/#{module_name}.js"],
-			cwd: "#{@output_dir}/dist/"
+					"-o", "#{@output_dir}-pkg/#{module_name}.js"],
+			cwd: "#{@output_dir}/"
 			# @proc.on 'error', console.log
 			@proc.stderr.setEncoding 'utf8'
 			@proc.stderr.on 'data', (err) =>
 				# filter out the file path
-				remove = "#{@output_dir}#{@sep}dist"
+				remove = "#{@output_dir}#{@sep}"
 				while ~err.indexOf remove
 					err = err.replace remove, ''
 				process.stdout.write err
@@ -137,7 +124,7 @@ class Builder extends EventEmitter
 		return @emit 'aborted' if @clock isnt tick
 		source = @processCoffee source
 		source = yield @mergeDefinition file, source, go()
-		yield @writeDistTsFile file, source, go()
+		yield @writeTsFile file, source, go()
 																														    
 	processCoffee: (source) ->
 		# Coffee to TypeScript
@@ -150,24 +137,25 @@ class Builder extends EventEmitter
 		yield fs.readFile ([@source_dir, file].join @sep), 
 			{encoding: 'utf8'}, go()
 																																
-	processBuiltSource: suspend.async (file) ->
+	processBuiltSource: suspend.async (tick, file) ->
 		js_file = file.replace @coffee_suffix, '.js'
-		source = yield fs.readFile ([@output_dir, 'dist', js_file].join @sep), 
+		source = yield fs.readFile @output_dir + @sep + js_file, 
 			{encoding: 'utf8'}, go()
+		return @emit 'aborted' if @clock isnt tick
 		source = @transpileYield source if @yield
-		yield @writeDistJsFile file, source, go()
+		yield @writeJsFile file, source, go()
 																																
 	transpileYield: (source) ->
 		ts_yield.markGenerators ts_yield.unwrapYield source
 																																
-	writeDistTsFile: suspend.async (file, source) ->
+	writeTsFile: suspend.async (file, source) ->
 		ts_file = file.replace @coffee_suffix, '.ts'
-		destination = writestreamp "#{@output_dir}/dist/#{ts_file}"
+		destination = writestreamp "#{@output_dir}/#{ts_file}"
 		yield destination.end source, 'utf8', go()
 																																
-	writeDistJsFile: suspend.async (file, source) ->
+	writeJsFile: suspend.async (file, source) ->
 		js_file = file.replace @coffee_suffix, '.js'
-		destination = writestreamp "#{@output_dir}/dist/#{js_file}"
+		destination = writestreamp "#{@output_dir}/#{js_file}"
 		yield destination.end source, 'utf8', go()
 																																
 	mergeDefinition: suspend.async (file, source) ->

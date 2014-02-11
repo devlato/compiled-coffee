@@ -60,9 +60,9 @@
       if (this.build_dirs_created) {
         return;
       }
-      dirs = [this.output_dir, this.output_dir + this.sep + 'cs2ts', this.output_dir + this.sep + 'dist'];
+      dirs = [this.output_dir];
       if (this.pack) {
-        dirs.push(this.output_dir + this.sep + 'dist-pkg');
+        dirs.push(this.output_dir + this.sep + 'dist');
       }
       yield async.eachSeries(dirs, suspend.async(function*(dir) {
         var exists;
@@ -80,17 +80,20 @@
       tick = ++this.clock;
       error = false;
       yield this.prepareDirs(go());
+      if (this.clock !== tick) {
+        return this.emit('aborted');
+      }
       yield async.map(this.files, this.processSource.bind(this, tick), go());
       if (this.clock !== tick) {
         return this.emit('aborted');
       }
       this.proc = spawn("" + __dirname + "/../../node_modules/typescript/bin/tsc", ["" + __dirname + "/../../d.ts/ecma.d.ts", "--module", "commonjs", "--declaration", "--sourcemap", "--noLib"].include(this.tsFiles()), {
-        cwd: "" + this.output_dir + "/dist/"
+        cwd: "" + this.output_dir + "/"
       });
       this.proc.stderr.setEncoding('utf8');
       this.proc.stderr.on('data', function(err) {
         var remove;
-        remove = "" + _this.output_dir + _this.sep + "dist";
+        remove = "" + _this.output_dir + _this.sep;
         while (~err.indexOf(remove)) {
           err = err.replace(remove, '');
         }
@@ -104,19 +107,19 @@
       if (this.clock !== tick) {
         return this.emit('aborted');
       }
-      yield async.map(this.files, this.processBuiltSource.bind(this), go());
+      yield async.map(this.files, this.processBuiltSource.bind(this, tick), go());
       if (this.clock !== tick) {
         return this.emit('aborted');
       }
       if (this.pack) {
         module_name = (this.pack.split(':')).slice(-1);
-        this.proc = spawn("" + __dirname + "/../../node_modules/browserify/bin/cmd.js", ["-r", "./" + this.pack, "--no-builtins", "--insert-globals", "-o", "" + this.output_dir + "/dist-pkg/" + module_name + ".js"], {
-          cwd: "" + this.output_dir + "/dist/"
+        this.proc = spawn("" + __dirname + "/../../node_modules/browserify/bin/cmd.js", ["-r", "./" + this.pack, "--no-builtins", "--insert-globals", "-o", "" + this.output_dir + "-pkg/" + module_name + ".js"], {
+          cwd: "" + this.output_dir + "/"
         });
         this.proc.stderr.setEncoding('utf8');
         this.proc.stderr.on('data', function(err) {
           var remove;
-          remove = "" + _this.output_dir + _this.sep + "dist";
+          remove = "" + _this.output_dir + _this.sep;
           while (~err.indexOf(remove)) {
             err = err.replace(remove, '');
           }
@@ -166,7 +169,7 @@
       }
       source = this.processCoffee(source);
       source = yield this.mergeDefinition(file, source, go());
-      return yield this.writeDistTsFile(file, source, go());
+      return yield this.writeTsFile(file, source, go());
     });
 
     Builder.prototype.processCoffee = function(source) {
@@ -185,33 +188,36 @@
       }, go());
     });
 
-    Builder.prototype.processBuiltSource = suspend.async(function*(file) {
+    Builder.prototype.processBuiltSource = suspend.async(function*(tick, file) {
       var js_file, source;
       js_file = file.replace(this.coffee_suffix, '.js');
-      source = yield fs.readFile([this.output_dir, 'dist', js_file].join(this.sep), {
+      source = yield fs.readFile(this.output_dir + this.sep + js_file, {
         encoding: 'utf8'
       }, go());
+      if (this.clock !== tick) {
+        return this.emit('aborted');
+      }
       if (this["yield"]) {
         source = this.transpileYield(source);
       }
-      return yield this.writeDistJsFile(file, source, go());
+      return yield this.writeJsFile(file, source, go());
     });
 
     Builder.prototype.transpileYield = function(source) {
       return ts_yield.markGenerators(ts_yield.unwrapYield(source));
     };
 
-    Builder.prototype.writeDistTsFile = suspend.async(function*(file, source) {
+    Builder.prototype.writeTsFile = suspend.async(function*(file, source) {
       var destination, ts_file;
       ts_file = file.replace(this.coffee_suffix, '.ts');
-      destination = writestreamp("" + this.output_dir + "/dist/" + ts_file);
+      destination = writestreamp("" + this.output_dir + "/" + ts_file);
       return yield destination.end(source, 'utf8', go());
     });
 
-    Builder.prototype.writeDistJsFile = suspend.async(function*(file, source) {
+    Builder.prototype.writeJsFile = suspend.async(function*(file, source) {
       var destination, js_file;
       js_file = file.replace(this.coffee_suffix, '.js');
-      destination = writestreamp("" + this.output_dir + "/dist/" + js_file);
+      destination = writestreamp("" + this.output_dir + "/" + js_file);
       return yield destination.end(source, 'utf8', go());
     });
 

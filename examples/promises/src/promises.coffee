@@ -1,7 +1,3 @@
-#/<reference path="../../d.ts/es6-promise.d.ts" />
-#/<reference path="../../../../d.ts/node.d.ts" />
-#/<reference path="../../../../d.ts/console.d.ts" />
-
 es6_promise = require 'es6-promise'
 Promise = es6_promise.Promise
  
