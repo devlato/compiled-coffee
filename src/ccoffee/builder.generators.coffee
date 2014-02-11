@@ -59,17 +59,23 @@ class Builder extends EventEmitter
 		yield @prepareDirs go()
 		
 		# Coffee to TypeScript
-		@proc = spawn "#{__dirname}/../../node_modules/coffee-script-to-" +
-			"typescript/bin/coffee",
-			['-cm', '-o', "#{@output_dir}/cs2ts", @source_dir],
-			cwd: @source_dir
-		@proc.stderr.setEncoding 'utf8'
-		@proc.stderr.on 'data', (err) ->
-			error = yes
-			process.stdout.write err
-			
-		yield @proc.on 'exit', go()
-		throw new CoffeeScriptError if error
+    try
+      require("#{__dirname}/../../node_modules/coffee-script-to-" +
+			  "typescript/bin/coffee").compile yield fs.readFile "#{__dirname}/../../node_modules/coffee-script-to-" +
+			  "typescript/bin/coffee", go()
+    catch e 
+		  throw new CoffeeScriptError if error
+#		@proc = spawn "#{__dirname}/../../node_modules/coffee-script-to-" +
+#			"typescript/bin/coffee",
+#			['-cm', '-o', "#{@output_dir}/cs2ts", @source_dir],
+#			cwd: @source_dir
+#		@proc.stderr.setEncoding 'utf8'
+#		@proc.stderr.on 'data', (err) ->
+#			error = yes
+#			process.stdout.write err
+#			
+#		yield @proc.on 'exit', go()
+#		throw new CoffeeScriptError if error
 		return @emit 'aborted' if @clock isnt tick
 				
 		# Process definition merging and other source manipulation
