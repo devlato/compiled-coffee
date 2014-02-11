@@ -34,11 +34,8 @@
       return "(?:^|\\n)(?:\\s{" + (tabs * 2) + "}|\\t{" + tabs + "})";
     };
     regexps = {
-      DEFINITION_REF: function(name) {
-        if (name == null) {
-          name = '[\\w$-/]+';
-        }
-        return new RegExp("^///<reference\\s+path=\"" + name + "\".*?(/>\\n?)", 'igm');
+      DEFINITION_REF: function() {
+        return new RegExp("^///<reference.*?(/>\\n?)", 'igm');
       },
       CLASS: function(name) {
         if (name == null) {
@@ -83,10 +80,8 @@
     }
     regexp = regexps.DEFINITION_REF();
     while (def = regexp.exec(headers)) {
-      console.log(def);
       source = def[0] + source;
     }
-    console.log(source);
     source = source.replace(regexps.CLASS(), function(match, name, extension, body) {
       var class_def, ret;
       log("Found class '" + name + "'");

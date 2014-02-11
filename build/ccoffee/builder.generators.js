@@ -2,7 +2,7 @@
 (function() {
   "TODO: \"Error:\" at the end";
 
-  var Builder, CoffeeScriptError, EventEmitter, TypeScriptError, async, coffee_script, fs, go, mergeDefinition, path, spawn, suspend, ts_yield, writestreamp,
+  var Builder, CoffeeScriptError, EventEmitter, TypeScriptError, async, coffee_script, cs_helpers, fs, go, mergeDefinition, path, spawn, suspend, ts_yield, writestreamp,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -23,6 +23,8 @@
   mergeDefinition = require('../dts-merger/merger').merge;
 
   coffee_script = require("../../node_modules/coffee-script-to-" + "typescript/lib/coffee-script");
+
+  cs_helpers = require("../../node_modules/coffee-script-to-" + "typescript/lib/helpers");
 
   path = require('path');
 
@@ -167,14 +169,19 @@
       if (this.clock !== tick) {
         return this.emit('aborted');
       }
-      source = this.processCoffee(source);
+      source = this.processCoffee(file, source);
       source = yield this.mergeDefinition(file, source, go());
       return yield this.writeTsFile(file, source, go());
     });
 
-    Builder.prototype.processCoffee = function(source) {
+    Builder.prototype.processCoffee = function(file, source) {
+      var js, v3SourceMap, _ref;
       try {
-        return coffee_script.compile(source);
+        cs_helpers.setTranslatingFile(file, source);
+        _ref = coffee_script.compile(source, {
+          sourceMap: true
+        }), js = _ref.js, v3SourceMap = _ref.v3SourceMap;
+        return js;
       } catch (e) {
         if (error) {
           throw new CoffeeScriptError;

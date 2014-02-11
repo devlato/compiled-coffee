@@ -1,4 +1,4 @@
-/// <reference path="../../../../node_modules/typescript-yield/d.ts/suspend.d.ts"/>
+/// <reference path="../../../node_modules/typescript-yield/d.ts/suspend.d.ts"/>
 
 class One {
 	numeric_attr: number;

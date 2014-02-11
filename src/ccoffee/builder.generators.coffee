@@ -14,6 +14,8 @@ writestreamp = require 'writestreamp'
 mergeDefinition = require('../dts-merger/merger').merge
 coffee_script = require "../../node_modules/coffee-script-to-" +
 		"typescript/lib/coffee-script"
+cs_helpers = require "../../node_modules/coffee-script-to-" +
+		"typescript/lib/helpers"
 #spawn_ = spawn
 #spawn = (args...) ->
 #	console.log 'Executing: ', args
@@ -122,14 +124,17 @@ class Builder extends EventEmitter
 	processSource: suspend.async (tick, file) ->
 		source = yield @readSourceFile file, go()
 		return @emit 'aborted' if @clock isnt tick
-		source = @processCoffee source
+		source = @processCoffee file, source
 		source = yield @mergeDefinition file, source, go()
 		yield @writeTsFile file, source, go()
 																														    
-	processCoffee: (source) ->
+	processCoffee: (file, source) ->
 		# Coffee to TypeScript
 		try
-			coffee_script.compile source
+			cs_helpers.setTranslatingFile file, source 
+			{ js, v3SourceMap } = coffee_script.compile source, sourceMap: yes
+			# TODO write the v3SourceMap
+			js
 		catch e
 			throw new CoffeeScriptError if error
 																														    

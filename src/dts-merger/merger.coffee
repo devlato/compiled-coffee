@@ -36,9 +36,8 @@ merge = (source, headers) ->
 		"(?:^|\\n)(?:\\s{#{tabs*2}}|\\t{#{tabs}})"
 
 	regexps =
-		DEFINITION_REF: (name) ->
-			name ?= '[\\w$-/]+'
-			new RegExp("^///<reference\\s+path=\"#{name}\".*?(/>\\n?)", 'igm')
+		DEFINITION_REF: ->
+			new RegExp("^///<reference.*?(/>\\n?)", 'igm')
 		CLASS: (name) ->
 			name ?= '[\\w$]+'
 			new RegExp "class\\s+(#{name})([$<>\\s\\w]+?)\\{((?:\\n|.)+?)(?:\\n\\})", 'ig'
@@ -71,12 +70,10 @@ merge = (source, headers) ->
 		source += def[0]
 			
 	regexp = regexps.DEFINITION_REF()
+
 	while def = regexp.exec headers
-		console.log def
 		source = def[0] + source
 		
-	console.log source
-
 	# for each class in the source
 	source = source.replace regexps.CLASS(), (match, name, extension, body) ->
 		log "Found class '#{name}'"
