@@ -48,7 +48,7 @@ npm install compiled-coffee
 # Status
 
 Right now you can write typed classes and untyped (but compiled) mocha tests
-without any headache. Compiler auto-recompiles the code after a file change.
+without any headache. Compiler auto re-compiles the code after a file change.
 
 Requires node --harmony (>=0.11) for the yield support.
 
@@ -78,7 +78,7 @@ disappear in the future:
   module.exports is needed if one plans to compile it with as a regular
   CoffeeScript
 - *d.ts files need an indentation of 1 tab or 2 spaces*
-- referenced d.ts files have a base dir from BUILD_DIR/dist
+- referenced d.ts files have a base dir from BUILD_DIR
 - class properties are initialized in the constructor, not in the prototype
 - only simple requires are supported eg `foo = require('foo')` 
   not `require('foo').bar` or `{foo} = require('foo')`
@@ -102,7 +102,6 @@ a = ->
 - Full support for exports
 - Merge currently unsupported d.ts definition types
   Including definition references
-- Reorder build dirs to unify references paths
 - Update to CoffeeScript 1.7
 - Merge yield support from [coffy-script](https://github.com/loveencounterflow/coffy-script)
 - Source maps support
