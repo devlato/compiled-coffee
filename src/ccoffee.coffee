@@ -8,7 +8,7 @@ go = suspend.resume
 assert = require 'assert'
 
 params
-	.version('0.1.0')
+	.version('0.2.0')
   .usage('-i <src> -o <build>')
 #	.option('-w, --watch', 'Watch for file changes')
 #	.option('-l, --log', 'Show logging information')
