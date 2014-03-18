@@ -37,10 +37,10 @@ merge = (source, headers) ->
 
 	regexps =
 		DEFINITION_REF: ->
-			new RegExp("^///<reference.*?(/>\\n?)", 'igm')
+			new RegExp("^///\\s*<reference.*?(/>\\n?)", 'igm')
 		CLASS: (name) ->
 			name ?= '[\\w$]+'
-			new RegExp "class\\s+(#{name})([$<>\\s\\w]+?)\\{((?:\\n|.)+?)(?:\\n\\})", 'ig'
+			new RegExp "(?:export\\s+)?class\\s+(#{name})([.$<>\\s\\w]+?)\\{((?:\\n|.)+?)(?:\\n\\})", 'ig'
 		METHOD: (indent, name) ->
 			name ?= '[\\w$]+'
 			indent = INDENT indent
@@ -70,10 +70,9 @@ merge = (source, headers) ->
 		source += def[0]
 			
 	regexp = regexps.DEFINITION_REF()
-
 	while def = regexp.exec headers
 		source = def[0] + source
-		
+
 	# for each class in the source
 	source = source.replace regexps.CLASS(), (match, name, extension, body) ->
 		log "Found class '#{name}'"
@@ -84,7 +83,7 @@ merge = (source, headers) ->
 		log "Found definition for class '#{name}'"
 		
 		# copy the class signature (interfaces, generics)
-		ret = "class #{class_def[1]}#{class_def[2]}#{extension}{#{body}\n}"
+		ret = "export class #{class_def[1]}#{class_def[2]}#{extension}{#{body}\n}"
 
 		# for each method in the source class
 		ret = ret.replace regexps.METHOD(2), (match, indent, signature, name) ->
@@ -98,7 +97,8 @@ merge = (source, headers) ->
 			log "Found #{defs.length} definition(s) for the method '#{name}'"
 			ret = ''
 			for def in defs[0...-1]
-				ret += "#{indent}#{def[1]}#{def[2]};"
+#				ret += "#{indent}#{def[1]}#{def[2]};"
+				ret += "#{indent}#{def[1]};"
 				
 			"#{ret}#{indent}#{defs.last()[1]} {"
 
@@ -117,7 +117,6 @@ merge = (source, headers) ->
 		ret
 
 	# TODO use body instead of match
-
 	source
 
 module.exports = {merge, mergeFile}

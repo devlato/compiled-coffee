@@ -1,11 +1,13 @@
 """
-TODO: "Error:" at the end
+TODO:
+- use TypeScript.api for watching and skip the fs.
 """
 
 suspend = require 'suspend'
 go = suspend.resume
 spawn = require('child_process').spawn
 async = require 'async'
+#tsapi = require "../../node_modules/typescript.api/bin/index.js"
 # TODO why this doesnt work? :O
 #ts_yield = require 'typescript-yield'
 ts_yield = require '../../node_modules/typescript-yield/build/ts-yield.js'
@@ -31,15 +33,15 @@ class Builder extends EventEmitter
 	source_dir: null
 	output_dir: null
 	sep: path.sep
-																
+																																
 	constructor: (@files, source_dir, output_dir, @pack = no, @yield = no) ->
 		super
-																																
+																																																																
 		@output_dir = path.resolve output_dir
 		@source_dir = path.resolve source_dir
-																																
+																																																																
 		@coffee_suffix = /\.coffee$/
-																																
+																																																																
 	prepareDirs: suspend.async ->
 		return if @build_dirs_created
 		dirs = [@output_dir]
@@ -57,13 +59,16 @@ class Builder extends EventEmitter
 	build: suspend.async ->
 		tick = ++@clock
 		error = no
-																																
+
+#		console.time 'tick'
 		yield @prepareDirs go()
 		return @emit 'aborted' if @clock isnt tick
-																																																																
+#		(console.timeEnd 'tick')
+		
 		# Process definition merging and other source manipulation
-		yield async.map @files, (@processSource.bind @, tick), go()
+		sources = yield async.map @files, (@processSource.bind @, tick), go()
 		return @emit 'aborted' if @clock isnt tick
+#		(console.timeEnd 'tick')
 
 		# Compile
 		# TODO use tss tools or typescript.api (keep all in memory)
@@ -82,15 +87,17 @@ class Builder extends EventEmitter
 			while ~err.indexOf remove
 				err = err.replace remove, ''
 			process.stdout.write err
-																																																
+			
 		try yield @proc.on 'close', go()
 		catch e
 			throw new TypeScriptError
 		return @emit 'aborted' if @clock isnt tick
-																																																																
+#		(console.timeEnd 'tick')
+																																																																																																																																
 		# Process definition merging and other source manipulation
 		yield async.map @files, (@processBuiltSource.bind @, tick), go()
 		return @emit 'aborted' if @clock isnt tick
+#		(console.timeEnd 'tick')
 
 		if @pack
 			module_name = (@pack.split ':')[-1..-1]
@@ -109,25 +116,46 @@ class Builder extends EventEmitter
 				while ~err.indexOf remove
 					err = err.replace remove, ''
 				process.stdout.write err
-																																																																
+																																																																																																																																
 			yield @proc.on 'close', go()
 			return @emit 'aborted' if @clock isnt tick
-																																
+#			(console.timeEnd 'tick')
+																																																																
 		@proc = null
-																																
+																																																																
 	tsFiles: -> 
 		files = (file.replace @coffee_suffix, '.ts' for file in @files)
-																																
+																																																																
 	dtsFiles: -> 
 		files = (file.replace @coffee_suffix, '.d.ts' for file in @files)
-																																
+				
+#	saveTypeScript: suspend.async (files) ->
+#
+#	# TODO tsapi.reset() on watch !!!
+#	compileTypeScript: (sources) ->
+#		files = []
+#		units = []
+#		for item in sources
+#			units.push tsapi.create item.file, item.source
+#			files.push item.file
+#
+#		tsapi.resolve files, (resolved) ->
+#			# check here for reference errors. 
+#			throw new TypeScriptError resolved if not tsapi.check resolved
+#			tsapi.compile resolved, (compiled) ->
+#				# check here for syntax and type errors.
+#				throw new TypeScriptError compiled if not tsapi.check compiled
+#				compiled
+																																																																
 	processSource: suspend.async (tick, file) ->
 		source = yield @readSourceFile file, go()
 		return @emit 'aborted' if @clock isnt tick
 		source = @processCoffee file, source
 		source = yield @mergeDefinition file, source, go()
 		yield @writeTsFile file, source, go()
-																														    
+		
+		file: (file.replace /\.coffee$/, '.ts'), source: source
+																																																														    
 	processCoffee: (file, source) ->
 		# Coffee to TypeScript
 		try
@@ -137,11 +165,11 @@ class Builder extends EventEmitter
 			js
 		catch e
 			throw new CoffeeScriptError if error
-																														    
+																																																														    
 	readSourceFile: suspend.async (file) ->
 		yield fs.readFile ([@source_dir, file].join @sep), 
 			{encoding: 'utf8'}, go()
-																																
+																																																																
 	processBuiltSource: suspend.async (tick, file) ->
 		js_file = file.replace @coffee_suffix, '.js'
 		source = yield fs.readFile @output_dir + @sep + js_file, 
@@ -149,20 +177,20 @@ class Builder extends EventEmitter
 		return @emit 'aborted' if @clock isnt tick
 		source = @transpileYield source if @yield
 		yield @writeJsFile file, source, go()
-																																
+																																																																
 	transpileYield: (source) ->
 		ts_yield.markGenerators ts_yield.unwrapYield source
-																																
+																																																																
 	writeTsFile: suspend.async (file, source) ->
 		ts_file = file.replace @coffee_suffix, '.ts'
 		destination = writestreamp "#{@output_dir}/#{ts_file}"
 		yield destination.end source, 'utf8', go()
-																																
+																																																																
 	writeJsFile: suspend.async (file, source) ->
 		js_file = file.replace @coffee_suffix, '.js'
 		destination = writestreamp "#{@output_dir}/#{js_file}"
 		yield destination.end source, 'utf8', go()
-																																
+																																																																
 	mergeDefinition: suspend.async (file, source) ->
 		dts_file = file.replace @coffee_suffix, '.d.ts'
 		# no definition file, copy the transpiled source directly
@@ -175,10 +203,10 @@ class Builder extends EventEmitter
 
 	close: ->
 		@proc?.kill()
-																																
+																																																																
 	clean: ->
 		throw new Error 'not implemented'
-																																
+																																																																
 	reload: suspend.async (refreshed) ->
 		console.log '-'.repeat 20 if refreshed
 		@proc?.kill()
@@ -189,7 +217,7 @@ class Builder extends EventEmitter
 				and e not instanceof CoffeeScriptError 
 			error = yes
 		console.log "Compilation completed" if not error
-																																
+																																																																
 	watch: suspend.async -> 
 		for file in @files
 			node = @source_dir + @sep + file
@@ -209,7 +237,7 @@ module.exports = Builder
 class TypeScriptError extends Error
 	constructor: ->
 		super 'TypeScript compilation error'
-																																
+																																																																
 class CoffeeScriptError extends Error
 	constructor: ->
 		super 'CoffeeScript compilation error'

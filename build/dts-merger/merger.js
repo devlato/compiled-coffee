@@ -35,13 +35,13 @@
     };
     regexps = {
       DEFINITION_REF: function() {
-        return new RegExp("^///<reference.*?(/>\\n?)", 'igm');
+        return new RegExp("^///\\s*<reference.*?(/>\\n?)", 'igm');
       },
       CLASS: function(name) {
         if (name == null) {
           name = '[\\w$]+';
         }
-        return new RegExp("class\\s+(" + name + ")([$<>\\s\\w]+?)\\{((?:\\n|.)+?)(?:\\n\\})", 'ig');
+        return new RegExp("(?:export\\s+)?class\\s+(" + name + ")([.$<>\\s\\w]+?)\\{((?:\\n|.)+?)(?:\\n\\})", 'ig');
       },
       METHOD: function(indent, name) {
         if (name == null) {
@@ -90,7 +90,7 @@
         return match;
       }
       log("Found definition for class '" + name + "'");
-      ret = "class " + class_def[1] + class_def[2] + extension + "{" + body + "\n}";
+      ret = "export class " + class_def[1] + class_def[2] + extension + "{" + body + "\n}";
       ret = ret.replace(regexps.METHOD(2), function(match, indent, signature, name) {
         var defs, _i, _len, _ref1;
         log("Found method '" + name + "'");
@@ -107,7 +107,7 @@
         _ref1 = defs.slice(0, -1);
         for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
           def = _ref1[_i];
-          ret += "" + indent + def[1] + def[2] + ";";
+          ret += "" + indent + def[1] + ";";
         }
         return "" + ret + indent + (defs.last()[1]) + " {";
       });
