@@ -50,7 +50,7 @@ merge = (source, headers) ->
 			name ?= '[\\w$]+'
 			indent = INDENT indent
 			new RegExp(
-					"(#{indent})((?:(?:public|private)\\s)?((?:static\\s+)?#{name})(?=:|=|;|\\s)((?:\\n|[^(])+?))(?:\\s?(=|;))", 'ig')
+					"(#{indent})((?:(?:public|private)\\s)?((?:static\\s+)?#{name})(?=:|=|;|\\s)((?:\\n|[^()])+?))(?:\\s?(=|;))", 'ig')
 		METHOD_DEF: (indent, name) ->
 			name = RegExpQuote name
 			indent = INDENT indent
@@ -83,6 +83,7 @@ merge = (source, headers) ->
 		log "Found definition for class '#{name}'"
 		
 		# copy the class signature (interfaces, generics)
+		# TODO loose the hardcoded export and handle it in the cs2ts transpiler 
 		ret = "export class #{class_def[1]}#{class_def[2]}#{extension}{#{body}\n}"
 
 		# for each method in the source class
@@ -105,6 +106,7 @@ merge = (source, headers) ->
 		# for each attribute in the source class
 		ret = ret.replace(regexps.ATTRIBUTE(2),
 			(match, indent, signature, name, space, suffix) ->
+				console.log ret, match if name is 'params'
 				log "Found attribute '#{name}'"
 				# match a corresponding method in the class'es definiton
 				def = regexps.ATTRIBUTE_DEF(1, name).exec class_def[3]

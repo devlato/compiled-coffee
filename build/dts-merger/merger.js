@@ -55,7 +55,7 @@
           name = '[\\w$]+';
         }
         indent = INDENT(indent);
-        return new RegExp("(" + indent + ")((?:(?:public|private)\\s)?((?:static\\s+)?" + name + ")(?=:|=|;|\\s)((?:\\n|[^(])+?))(?:\\s?(=|;))", 'ig');
+        return new RegExp("(" + indent + ")((?:(?:public|private)\\s)?((?:static\\s+)?" + name + ")(?=:|=|;|\\s)((?:\\n|[^()])+?))(?:\\s?(=|;))", 'ig');
       },
       METHOD_DEF: function(indent, name) {
         name = RegExpQuote(name);
@@ -112,6 +112,9 @@
         return "" + ret + indent + (defs.last()[1]) + " {";
       });
       ret = ret.replace(regexps.ATTRIBUTE(2), function(match, indent, signature, name, space, suffix) {
+        if (name === 'params') {
+          console.log(ret, match);
+        }
         log("Found attribute '" + name + "'");
         def = regexps.ATTRIBUTE_DEF(1, name).exec(class_def[3]);
         if (!def) {

@@ -1,7 +1,7 @@
 export interface IExample {
-    foo();
+	foo();
 }
 
 class One implements IExample {
-    
+	
 }
