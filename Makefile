@@ -1,6 +1,6 @@
 CS2TS=./node_modules/coffee-script-to-typescript/bin/coffee
 TS=./node_modules/typescript/bin/tsc
-CS_GENERATORS=./node_modules/coffeescript-generators/bin/coffee
+CS_GENERATORS=./node_modules/coffee-script/bin/coffee
 MOCHA=./node_modules/mocha/bin/mocha
 
 build:
