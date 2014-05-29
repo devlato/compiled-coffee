@@ -14,7 +14,7 @@
 
   async = require('async');
 
-  ts_yield = require('../../node_modules/typescript-yield/build/ts-yield.js');
+  ts_yield = require('../../node_modules/typescript-yield/build/functions.js');
 
   fs = require('fs');
 

@@ -1,7 +1,7 @@
-# each external import (without TS source, defined in by a definition file)
+# each external import (without TS source, defined by a definition file)
 # needs to have a `declare module` directive with a STRING name
 
-#/ <reference path="../../d.ts/underscore.d.ts"/>
+#/ <reference path="../d.ts/underscore.d.ts"/>
 
 _ = require 'underscore'
 

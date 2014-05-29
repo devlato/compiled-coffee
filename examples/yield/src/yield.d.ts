@@ -1,4 +1,6 @@
-/// <reference path="../../../node_modules/typescript-yield/d.ts/suspend.d.ts"/>
+/// <reference path="../../../node_modules/typescript-yield/example/d.ts/suspend.d.ts"/>
+/// <reference path="../../../d.ts/node.d.ts"/>
+/// <reference path="../../../d.ts/console.d.ts"/>
 
 class One {
 	numeric_attr: number;
@@ -11,3 +13,6 @@ class One {
 	// callback(foo: string, next: (err: any, result: number));
 	test(foo: string, next: suspend.IResume<void>);
 }
+
+
+// /usr/local/google/home/tcudnik/workspace/compiled-coffee/node_modules/typescript-yield/example/d.ts

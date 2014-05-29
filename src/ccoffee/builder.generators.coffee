@@ -10,7 +10,7 @@ async = require 'async'
 #tsapi = require "../../node_modules/typescript.api/bin/index.js"
 # TODO why this doesnt work? :O
 #ts_yield = require 'typescript-yield'
-ts_yield = require '../../node_modules/typescript-yield/build/ts-yield.js'
+ts_yield = require '../../node_modules/typescript-yield/build/functions.js'
 fs = require 'fs'
 writestreamp = require 'writestreamp'
 mergeDefinition = require('../dts-merger/merger').merge

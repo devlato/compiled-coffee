@@ -10,7 +10,7 @@ class PromiseExample {
 	constructor(string: string, number: number);
 	createPromise(number: number): Promise.Promise<TestClass>;
 	promiseResolver(number: number, resolve:
-		(result: number) => void): void;
+		(result: TestClass) => void): void;
 	printResult(object: TestClass);
 }
 

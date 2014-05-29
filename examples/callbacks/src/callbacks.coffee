@@ -1,5 +1,5 @@
-#/<reference path="../../../../d.ts/node.d.ts" />
-#/<reference path="../../../../d.ts/console.d.ts" />
+#/<reference path="../../../d.ts/node.d.ts" />
+#/<reference path="../../../d.ts/console.d.ts" />
 
 class CallbacksConsumer
   @asyncMethod: (param, callback) ->
