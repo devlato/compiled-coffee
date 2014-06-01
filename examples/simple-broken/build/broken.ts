@@ -1,4 +1,4 @@
-/// <reference path="../../../../d.ts/console.d.ts"/>
+/// <reference path="../../../d.ts/console.d.ts"/>
 "See /examples/simple for the correct version.";
 
 export class One  {

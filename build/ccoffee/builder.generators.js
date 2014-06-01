@@ -179,14 +179,18 @@
     });
 
     Builder.prototype.processCoffee = function(file, source) {
-      var js, v3SourceMap, _ref;
+      var js, message, useColors, v3SourceMap, _ref;
       try {
         cs_helpers.setTranslatingFile(file, source);
         _ref = coffee_script.compile(source, {
           sourceMap: true
         }), js = _ref.js, v3SourceMap = _ref.v3SourceMap;
         return js;
-      } catch (e) {
+      } catch (err) {
+        useColors = process.stdout.isTTY && !process.env.NODE_DISABLE_COLORS;
+        message = cs_helpers.prettyErrorMessage(err, file, source, useColors);
+        console.log("error compiling " + file);
+        console.log(message);
         throw new CoffeeScriptError;
       }
     };
@@ -263,12 +267,12 @@
       }
       try {
         yield this.build(go());
+        return console.log("Compilation completed");
       } catch (e) {
         if (!(e instanceof TypeScriptError) && !(e instanceof CoffeeScriptError)) {
           throw e;
         }
       }
-      return console.log("Compilation completed");
     });
 
     Builder.prototype.watch = suspend.async(function*() {

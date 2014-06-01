@@ -2,8 +2,6 @@
 See /examples/simple for the correct version.
 """
 
-#/ <reference path="../../../../d.ts/console.d.ts"/>
-
 class One
 	string_attr: 'abc'
 	number_attr: null

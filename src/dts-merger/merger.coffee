@@ -115,7 +115,7 @@ merge = (source, headers) ->
 				
 				"#{indent}#{def[1]} #{suffix}"
 		)
-		
+		  
 		ret
 
 	# TODO use body instead of match

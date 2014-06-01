@@ -33,15 +33,15 @@ class Builder extends EventEmitter
 	source_dir: null
 	output_dir: null
 	sep: path.sep
-																																
+
 	constructor: (@files, source_dir, output_dir, @pack = no, @yield = no) ->
 		super
-																																																																
+																																																																																																																																
 		@output_dir = path.resolve output_dir
 		@source_dir = path.resolve source_dir
-																																																																
+																																																																																																																																
 		@coffee_suffix = /\.coffee$/
-																																																																
+
 	prepareDirs: suspend.async ->
 		return if @build_dirs_created
 		dirs = [@output_dir]
@@ -64,7 +64,7 @@ class Builder extends EventEmitter
 		yield @prepareDirs go()
 		return @emit 'aborted' if @clock isnt tick
 #		(console.timeEnd 'tick')
-		
+
 		# Process definition merging and other source manipulation
 		sources = yield async.map @files, (@processSource.bind @, tick), go()
 		return @emit 'aborted' if @clock isnt tick
@@ -87,13 +87,13 @@ class Builder extends EventEmitter
 			while ~err.indexOf remove
 				err = err.replace remove, ''
 			process.stdout.write err
-			
+
 		try yield @proc.on 'close', go()
 		catch e
 			throw new TypeScriptError
 		return @emit 'aborted' if @clock isnt tick
 #		(console.timeEnd 'tick')
-																																																																																																																																
+
 		# Process definition merging and other source manipulation
 		yield async.map @files, (@processBuiltSource.bind @, tick), go()
 		return @emit 'aborted' if @clock isnt tick
@@ -116,19 +116,19 @@ class Builder extends EventEmitter
 				while ~err.indexOf remove
 					err = err.replace remove, ''
 				process.stdout.write err
-																																																																																																																																
+
 			yield @proc.on 'close', go()
 			return @emit 'aborted' if @clock isnt tick
 #			(console.timeEnd 'tick')
-																																																																
+
 		@proc = null
-																																																																
+
 	tsFiles: -> 
 		files = (file.replace @coffee_suffix, '.ts' for file in @files)
-																																																																
+
 	dtsFiles: -> 
 		files = (file.replace @coffee_suffix, '.d.ts' for file in @files)
-				
+
 #	saveTypeScript: suspend.async (files) ->
 #
 #	# TODO tsapi.reset() on watch !!!
@@ -146,16 +146,16 @@ class Builder extends EventEmitter
 #				# check here for syntax and type errors.
 #				throw new TypeScriptError compiled if not tsapi.check compiled
 #				compiled
-																																																																
+
 	processSource: suspend.async (tick, file) ->
 		source = yield @readSourceFile file, go()
 		return @emit 'aborted' if @clock isnt tick
 		source = @processCoffee file, source
 		source = yield @mergeDefinition file, source, go()
 		yield @writeTsFile file, source, go()
-		
+
 		file: (file.replace /\.coffee$/, '.ts'), source: source
-																																																														    
+
 	processCoffee: (file, source) ->
 		# Coffee to TypeScript
 		try
@@ -163,13 +163,17 @@ class Builder extends EventEmitter
 			{ js, v3SourceMap } = coffee_script.compile source, sourceMap: yes
 			# TODO write the v3SourceMap
 			js
-		catch e
+		catch err
+			useColors = process.stdout.isTTY and not process.env.NODE_DISABLE_COLORS
+			message = cs_helpers.prettyErrorMessage err, file, source, useColors
+			console.log "error compiling #{file}"
+			console.log message
 			throw new CoffeeScriptError
-																																																														    
+
 	readSourceFile: suspend.async (file) ->
 		yield fs.readFile ([@source_dir, file].join @sep), 
 			{encoding: 'utf8'}, go()
-																																																																
+
 	processBuiltSource: suspend.async (tick, file) ->
 		js_file = file.replace @coffee_suffix, '.js'
 		source = yield fs.readFile @output_dir + @sep + js_file, 
@@ -177,20 +181,20 @@ class Builder extends EventEmitter
 		return @emit 'aborted' if @clock isnt tick
 		source = @transpileYield source if @yield
 		yield @writeJsFile file, source, go()
-																																																																
+
 	transpileYield: (source) ->
 		ts_yield.markGenerators ts_yield.unwrapYield source
-																																																																
+
 	writeTsFile: suspend.async (file, source) ->
 		ts_file = file.replace @coffee_suffix, '.ts'
 		destination = writestreamp "#{@output_dir}/#{ts_file}"
 		yield destination.end source, 'utf8', go()
-																																																																
+
 	writeJsFile: suspend.async (file, source) ->
 		js_file = file.replace @coffee_suffix, '.js'
 		destination = writestreamp "#{@output_dir}/#{js_file}"
 		yield destination.end source, 'utf8', go()
-																																																																
+
 	mergeDefinition: suspend.async (file, source) ->
 		dts_file = file.replace @coffee_suffix, '.d.ts'
 		# no definition file, copy the transpiled source directly
@@ -203,19 +207,20 @@ class Builder extends EventEmitter
 
 	close: ->
 		@proc?.kill()
-																																																																
+
 	clean: ->
 		throw new Error 'not implemented'
-																																																																
+
 	reload: suspend.async (refreshed) ->
 		console.log '-'.repeat 20 if refreshed
 		@proc?.kill()
-		try yield @build go()
+		try
+			yield @build go()
+			console.log "Compilation completed"
 		catch e
 			throw e if e not instanceof TypeScriptError \
-				and e not instanceof CoffeeScriptError 
-		console.log "Compilation completed"
-																																																																
+				and e not instanceof CoffeeScriptError
+
 	watch: suspend.async -> 
 		for file in @files
 			node = @source_dir + @sep + file
@@ -235,7 +240,7 @@ module.exports = Builder
 class TypeScriptError extends Error
 	constructor: ->
 		super 'TypeScript compilation error'
-																																																																
+
 class CoffeeScriptError extends Error
 	constructor: ->
 		super 'CoffeeScript compilation error'
