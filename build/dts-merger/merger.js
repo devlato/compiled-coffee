@@ -80,7 +80,7 @@
     }
     regexp = regexps.DEFINITION_REF();
     while (def = regexp.exec(headers)) {
-      source = def[0] + source;
+      source = def[0] + "\n" + source;
     }
     source = source.replace(regexps.CLASS(), function(match, name, extension, body) {
       var class_def, ret;

@@ -74,7 +74,7 @@ class Builder extends EventEmitter
 		# TODO use tss tools or typescript.api (keep all in memory)
 		@proc = spawn "#{__dirname}/../../node_modules/typescript/bin/tsc", [
 				"#{__dirname}/../../d.ts/ecma.d.ts", 
-				"--module", "commonjs", 
+				"--module", "commonjs",
 				"--declaration", 
 				"--sourcemap", 
 				"--noLib"]

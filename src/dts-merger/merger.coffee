@@ -71,7 +71,7 @@ merge = (source, headers) ->
 			
 	regexp = regexps.DEFINITION_REF()
 	while def = regexp.exec headers
-		source = def[0] + source
+		source = def[0] + "\n" + source
 
 	# for each class in the source
 	source = source.replace regexps.CLASS(), (match, name, extension, body) ->
@@ -115,7 +115,7 @@ merge = (source, headers) ->
 				
 				"#{indent}#{def[1]} #{suffix}"
 		)
-		  
+
 		ret
 
 	# TODO use body instead of match
