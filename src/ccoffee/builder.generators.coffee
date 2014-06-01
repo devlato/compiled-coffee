@@ -164,7 +164,7 @@ class Builder extends EventEmitter
 			# TODO write the v3SourceMap
 			js
 		catch e
-			throw new CoffeeScriptError if error
+			throw new CoffeeScriptError
 																																																														    
 	readSourceFile: suspend.async (file) ->
 		yield fs.readFile ([@source_dir, file].join @sep), 
@@ -210,13 +210,11 @@ class Builder extends EventEmitter
 	reload: suspend.async (refreshed) ->
 		console.log '-'.repeat 20 if refreshed
 		@proc?.kill()
-		error = no
 		try yield @build go()
 		catch e
 			throw e if e not instanceof TypeScriptError \
 				and e not instanceof CoffeeScriptError 
-			error = yes
-		console.log "Compilation completed" if not error
+		console.log "Compilation completed"
 																																																																
 	watch: suspend.async -> 
 		for file in @files

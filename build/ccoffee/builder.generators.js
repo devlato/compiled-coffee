@@ -187,9 +187,7 @@
         }), js = _ref.js, v3SourceMap = _ref.v3SourceMap;
         return js;
       } catch (e) {
-        if (error) {
-          throw new CoffeeScriptError;
-        }
+        throw new CoffeeScriptError;
       }
     };
 
@@ -256,25 +254,21 @@
     };
 
     Builder.prototype.reload = suspend.async(function*(refreshed) {
-      var error, _ref;
+      var _ref;
       if (refreshed) {
         console.log('-'.repeat(20));
       }
       if ((_ref = this.proc) != null) {
         _ref.kill();
       }
-      error = false;
       try {
         yield this.build(go());
       } catch (e) {
         if (!(e instanceof TypeScriptError) && !(e instanceof CoffeeScriptError)) {
           throw e;
         }
-        error = true;
       }
-      if (!error) {
-        return console.log("Compilation completed");
-      }
+      return console.log("Compilation completed");
     });
 
     Builder.prototype.watch = suspend.async(function*() {
