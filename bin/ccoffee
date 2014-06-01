@@ -1,2 +1,2 @@
-#!/usr/bin/env node --harmony
+#!/usr/bin/node --harmony
 require('../build/ccoffee');
