@@ -71,7 +71,7 @@ merge = (source, headers) ->
 			
 	regexp = regexps.DEFINITION_REF()
 	while def = regexp.exec headers
-		source = def[0] + "\n" + source
+		source = (def[0].replace /\n$/, '') + "\n" + source
 
 	# for each class in the source
 	source = source.replace regexps.CLASS(), (match, name, extension, body) ->
