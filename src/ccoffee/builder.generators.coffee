@@ -36,10 +36,10 @@ class Builder extends EventEmitter
 
 	constructor: (@files, source_dir, output_dir, @pack = no, @yield = no) ->
 		super
-																																																																																																																																
+
 		@output_dir = path.resolve output_dir
 		@source_dir = path.resolve source_dir
-																																																																																																																																
+
 		@coffee_suffix = /\.coffee$/
 
 	prepareDirs: suspend.async ->
@@ -88,9 +88,10 @@ class Builder extends EventEmitter
 				err = err.replace remove, ''
 			process.stdout.write err
 
+		ts_warnings = no
 		try yield @proc.on 'close', go()
 		catch e
-			throw new TypeScriptError
+			ts_warnings = yes
 		return @emit 'aborted' if @clock isnt tick
 #		(console.timeEnd 'tick')
 
@@ -120,6 +121,8 @@ class Builder extends EventEmitter
 			yield @proc.on 'close', go()
 			return @emit 'aborted' if @clock isnt tick
 #			(console.timeEnd 'tick')
+		
+		throw new TypeScriptError if ts_warnings
 
 		@proc = null
 

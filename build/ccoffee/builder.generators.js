@@ -77,7 +77,7 @@
     });
 
     Builder.prototype.build = suspend.async(function*() {
-      var error, module_name, sources, tick,
+      var error, module_name, sources, tick, ts_warnings,
         _this = this;
       tick = ++this.clock;
       error = false;
@@ -101,10 +101,11 @@
         }
         return process.stdout.write(err);
       });
+      ts_warnings = false;
       try {
         yield this.proc.on('close', go());
       } catch (e) {
-        throw new TypeScriptError;
+        ts_warnings = true;
       }
       if (this.clock !== tick) {
         return this.emit('aborted');
@@ -131,6 +132,9 @@
         if (this.clock !== tick) {
           return this.emit('aborted');
         }
+      }
+      if (ts_warnings) {
+        throw new TypeScriptError;
       }
       return this.proc = null;
     });
