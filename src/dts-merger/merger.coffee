@@ -83,7 +83,7 @@ merge = (source, headers) ->
 		log "Found definition for class '#{name}'"
 		
 		# copy the class signature (interfaces, generics)
-		# TODO loose the hardcoded export and handle it in the cs2ts transpiler 
+		extension = extension.replace class_def[2], ''
 		ret = "export class #{class_def[1]}#{class_def[2]}#{extension}{#{body}\n}"
 
 		# for each method in the source class

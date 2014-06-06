@@ -22,6 +22,7 @@ describe 'd.ts merger', ->
 
 		it 'should output inherited classes', ->
 			expect(output).to.contain "extends Bar"
+			expect(output).to.not.contain /extends.+extends/
 
 		it 'should output the class keyword and name', ->
 			expect(output).to.contain "class Foo"
