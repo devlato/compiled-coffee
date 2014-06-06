@@ -1,4 +1,4 @@
-merger = require '../src/dts-merger/merger'
+merger = require '../build/dts-merger/merger'
 expect = require 'expect.js'
 
 describe 'd.ts merger', ->
@@ -7,20 +7,20 @@ describe 'd.ts merger', ->
 
 		before ->
 			source = """
-				class Foo extends Bar {
-				}
+class Foo extends Bar {
+}
 			"""
 			definition = """
-				class Foo extends Bar implements Baz1,
-					Baz2 {
-				}
+class Foo extends Bar implements Baz1,
+	Baz2 {
+}
 			"""
 			output = merger.merge source, definition
 
 		it 'should merge interfaces', ->
 			expect(output).to.contain "implements Baz1,\n\tBaz2"
 
-		it 'should output inherited classes', ->
+		it 'should output an inherited class', ->
 			expect(output).to.contain "extends Bar"
 			expect(output).to.not.contain /extends.+extends/
 

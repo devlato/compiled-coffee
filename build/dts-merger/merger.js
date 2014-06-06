@@ -41,7 +41,7 @@
         if (name == null) {
           name = '[\\w$]+';
         }
-        return new RegExp("(?:export\\s+)?class\\s+(" + name + ")([.$<>\\s\\w]+?)\\{((?:\\n|.)+?)(?:\\n\\})", 'ig');
+        return new RegExp("(?:export\\s+)?class\\s+(" + name + ")([.$<>\\s\\w\\n,]+?)\\{((?:\\n|.)+?)?(?:\\n\\})", 'ig');
       },
       METHOD: function(indent, name) {
         if (name == null) {
@@ -90,7 +90,11 @@
         return match;
       }
       log("Found definition for class '" + name + "'");
-      ret = "export class " + class_def[1] + class_def[2] + extension + "{" + body + "\n}";
+      class_def[2] = class_def[2].replace(extension, '');
+      if (body == null) {
+        body = '';
+      }
+      ret = "export class " + class_def[1] + extension + class_def[2] + "{" + body + "\n}";
       ret = ret.replace(regexps.METHOD(2), function(match, indent, signature, name) {
         var defs, _i, _len, _ref1;
         log("Found method '" + name + "'");

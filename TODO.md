@@ -1,7 +1,6 @@
 ## NOW
 - exported .d.ts files wrapping in string modules (commonjs)
 - global definition inclusion (CLI level)
-- extends declared in the source and d.ts file duplicates
 
 # DTS Merger
 - support rest of the TS language parts

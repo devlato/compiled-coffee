@@ -27,7 +27,15 @@ test:
 		--harmony-generators \
 		--compilers coffee:coffee-script \
 		--reporter spec \
-		build2/test/dist/*.coffee
+		test/*.coffee
+
+test-dts-merger:
+	#rm test/build/*/**
+	$(MOCHA) \
+		--harmony-generators \
+		--compilers coffee:coffee-script \
+		--reporter spec \
+		test/dts-merger.coffee
 
 test-build-watch:
 	node --harmony ../typed-coffeescript/src/coffeetype.js -o build2/test -i test

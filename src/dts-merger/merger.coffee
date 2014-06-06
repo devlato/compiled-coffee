@@ -40,7 +40,7 @@ merge = (source, headers) ->
 			new RegExp("^///\\s*<reference.*?(/>\\n?)", 'igm')
 		CLASS: (name) ->
 			name ?= '[\\w$]+'
-			new RegExp "(?:export\\s+)?class\\s+(#{name})([.$<>\\s\\w]+?)\\{((?:\\n|.)+?)(?:\\n\\})", 'ig'
+			new RegExp "(?:export\\s+)?class\\s+(#{name})([.$<>\\s\\w\\n,]+?)\\{((?:\\n|.)+?)?(?:\\n\\})", 'ig'
 		METHOD: (indent, name) ->
 			name ?= '[\\w$]+'
 			indent = INDENT indent
@@ -83,8 +83,9 @@ merge = (source, headers) ->
 		log "Found definition for class '#{name}'"
 		
 		# copy the class signature (interfaces, generics)
-		extension = extension.replace class_def[2], ''
-		ret = "export class #{class_def[1]}#{class_def[2]}#{extension}{#{body}\n}"
+		class_def[2] = class_def[2].replace extension, ''
+		body ?= ''
+		ret = "export class #{class_def[1]}#{extension}#{class_def[2]}{#{body}\n}"
 
 		# for each method in the source class
 		ret = ret.replace regexps.METHOD(2), (match, indent, signature, name) ->
