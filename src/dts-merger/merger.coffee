@@ -84,6 +84,7 @@ merge = (source, headers) ->
 		
 		# copy the class signature (interfaces, generics)
 		class_def[2] = class_def[2].replace extension, ''
+		class_def[2] = class_def[2].replace /\s+/, ''
 		body ?= ''
 		ret = "export class #{class_def[1]}#{extension}#{class_def[2]}{#{body}\n}"
 

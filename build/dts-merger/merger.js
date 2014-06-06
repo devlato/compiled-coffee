@@ -91,6 +91,7 @@
       }
       log("Found definition for class '" + name + "'");
       class_def[2] = class_def[2].replace(extension, '');
+      class_def[2] = class_def[2].replace(/\s+/, '');
       if (body == null) {
         body = '';
       }
