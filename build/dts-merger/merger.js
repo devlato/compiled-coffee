@@ -90,7 +90,9 @@
         return match;
       }
       log("Found definition for class '" + name + "'");
-      class_def[2] = class_def[2].replace(extension, '');
+      if (~extension.indexOf('extends')) {
+        class_def[2] = class_def[2].replace(/extends.+?(implements|$)/m, '');
+      }
       class_def[2] = class_def[2].replace(/\s+/, '');
       if (body == null) {
         body = '';

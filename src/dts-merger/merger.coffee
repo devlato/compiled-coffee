@@ -82,8 +82,10 @@ merge = (source, headers) ->
 		return match if not class_def
 		log "Found definition for class '#{name}'"
 		
+		# remove a duplicated extends clause, honoring the one from coffeescript
+		if ~extension.indexOf 'extends'
+			class_def[2] = class_def[2].replace /extends.+?(implements|$)/m, ''
 		# copy the class signature (interfaces, generics)
-		class_def[2] = class_def[2].replace extension, ''
 		class_def[2] = class_def[2].replace /\s+/, ''
 		body ?= ''
 		ret = "export class #{class_def[1]}#{extension}#{class_def[2]}{#{body}\n}"
