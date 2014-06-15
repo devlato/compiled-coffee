@@ -275,6 +275,8 @@
       } catch (e) {
         if (!(e instanceof TypeScriptError) && !(e instanceof CoffeeScriptError)) {
           throw e;
+        } else {
+          return console.log("Compilation completed with warnings");
         }
       }
     });

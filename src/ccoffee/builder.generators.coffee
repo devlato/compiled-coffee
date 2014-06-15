@@ -122,7 +122,7 @@ class Builder extends EventEmitter
 			return @emit 'aborted' if @clock isnt tick
 #			(console.timeEnd 'tick')
 		
-		throw new TypeScriptError if ts_warnings
+		throw new TypeScriptError if ts_warnings 
 
 		@proc = null
 
@@ -221,8 +221,10 @@ class Builder extends EventEmitter
 			yield @build go()
 			console.log "Compilation completed"
 		catch e
-			throw e if e not instanceof TypeScriptError \
-				and e not instanceof CoffeeScriptError
+			if e not instanceof TypeScriptError and e not instanceof CoffeeScriptError
+				throw e
+			else
+				console.log "Compilation completed with warnings"
 
 	watch: suspend.async -> 
 		for file in @files
