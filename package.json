@@ -8,7 +8,6 @@
 	"directories": {"bin": "bin/"},
 	"scripts": {"test": "make test"},
 	"dependencies": {
-		"coffee-script-to-typescript": "TobiaszCudnik/coffeescript-to-typescript#almost-master",
 		"typescript": "latest",
 		"commander": "latest",
 		"suspend": "latest",
@@ -20,9 +19,8 @@
 	},
 	"repository": "TobiaszCudnik/compiled-coffee",
 	"devDependencies": {
-		"coffeescript-generators": "almost/coffee-script",
+		"coffee-script-to-typescript": "TobiaszCudnik/coffeescript-to-typescript#almost-master",
 		"mocha": "latest",
-		"expect.js": "latest",
-		"node-inspector": "strongloop/node-inspector"
+		"expect.js": "latest"
 	}
 }
