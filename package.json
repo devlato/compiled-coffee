@@ -16,7 +16,7 @@
 		"sugar": "latest",
 		"glob": "latest",
 		"writestreamp": "latest",
-		"typescript-yield": "latest"
+		"typescript-yield": "TobiaszCudnik/typescript-yield"
 	},
 	"repository": "TobiaszCudnik/compiled-coffee",
 	"devDependencies": {
