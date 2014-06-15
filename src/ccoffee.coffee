@@ -1,6 +1,6 @@
 #!/usr/bin/env node --harmony
 
-Builder = require './ccoffee/builder.generators'
+builder = require './ccoffee/builder.generators'
 params = require 'commander'
 glob = require 'glob'
 suspend = require 'suspend'
@@ -33,14 +33,14 @@ main = suspend ->
 	# TODO doesnt glob subdirs?
 	files = yield glob '**/*.coffee', {cwd: params.sourceDir}, go()
 	assert files.length, "No files to precess found"
-	builder = new Builder files, params.sourceDir, params.buildDir, params.pack,
+	worker = new builder.Builder files, params.sourceDir, params.buildDir, params.pack,
 		params.yield
 	
 	# run
 	if params.watch
-		yield builder.watch go()
+		yield worker.watch go()
 	else 
-		yield builder.build go()
+		yield worker.build go()
 		console.log "Compilation completed"
 		
 main()

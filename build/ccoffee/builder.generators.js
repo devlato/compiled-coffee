@@ -317,8 +317,6 @@
 
   })(EventEmitter);
 
-  module.exports = Builder;
-
   TypeScriptError = (function(_super) {
 
     __extends(TypeScriptError, _super);
@@ -342,5 +340,11 @@
     return CoffeeScriptError;
 
   })(Error);
+
+  module.exports = {
+    Builder: Builder,
+    CoffeeScriptError: CoffeeScriptError,
+    TypeScriptError: TypeScriptError
+  };
 
 }).call(this);

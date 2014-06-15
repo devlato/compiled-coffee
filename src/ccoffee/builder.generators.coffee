@@ -240,8 +240,6 @@ class Builder extends EventEmitter
 				@reload yes, ->
 		yield @reload no, go()
 
-module.exports = Builder
-
 class TypeScriptError extends Error
 	constructor: ->
 		super 'TypeScript compilation error'
@@ -249,3 +247,8 @@ class TypeScriptError extends Error
 class CoffeeScriptError extends Error
 	constructor: ->
 		super 'CoffeeScript compilation error'
+
+
+module.exports = {
+	Builder, CoffeeScriptError, TypeScriptError
+}
