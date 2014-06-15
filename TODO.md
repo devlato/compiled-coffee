@@ -1,5 +1,6 @@
 ## NOW
 - exported .d.ts files wrapping in string modules (commonjs)
+ - adding "export import" to all imports
 - global definition inclusion (CLI level)
 
 # DTS Merger
@@ -14,6 +15,7 @@
 # ALL
 - ability to turn off specific typescruipt errors
   eg "TS2065: Return type of public method from exported class is using inaccessible module"
+  error TS2027: Exported variable 'exported' has or is using private type 'IExport'
 - watch d.ts files recursively
 - dont pollute global namespace!
 - resurect tests
