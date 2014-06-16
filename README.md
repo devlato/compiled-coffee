@@ -96,6 +96,7 @@ a = ->
   b = -> 1
 ```
 - yield in IF statements doesn't work
+- error when doing `a = b = null`
 
 # Roadmap
 
