@@ -1,9 +1,10 @@
 ## NOW
-- exported .d.ts files wrapping in string modules (commonjs)
- - adding "export import" to all imports
-- global definition inclusion (CLI level)
+- interface generics are not merged in
+- interfaces are not public
 
 # DTS Merger
+- exported .d.ts files wrapping in string modules (commonjs)
+ - adding "export import" to all imports
 - support rest of the TS language parts
 - extract to a separate module
 - copy referenced definitions
@@ -11,6 +12,9 @@
 - switch the compiler to coffy-script (better yield) once it supports CS 1.7
 - exlude commented out code
 - use a *fucking* AST finally
+
+# COMPILER
+- global definition inclusion (CLI level)
 
 # ALL
 - ability to turn off specific typescruipt errors
