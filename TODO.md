@@ -1,6 +1,6 @@
 ## NOW
 - interface generics are not merged in
-- interfaces are not public
+- interfaces are not public (when not exported)
 
 # DTS Merger
 - exported .d.ts files wrapping in string modules (commonjs)
@@ -12,6 +12,9 @@
 - switch the compiler to coffy-script (better yield) once it supports CS 1.7
 - exlude commented out code
 - use a *fucking* AST finally
+
+# COFFEE
+- `for id, msg of @results` doesnt declare msg, thus doesnt infer it
 
 # COMPILER
 - global definition inclusion (CLI level)
